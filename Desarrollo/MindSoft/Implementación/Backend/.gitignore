@@ -1,4 +1,5 @@
 .venv
+venv
 .env
 
 # Byte-compiled / optimized / DLL files
