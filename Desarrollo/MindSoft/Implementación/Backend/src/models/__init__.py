@@ -1,4 +1,4 @@
-from .dayli_rating import DaylyRating
+from .dayly_rating import DaylyRating
 from .goal import Goal
 from .gratitude_journal import GratitudeJournal
 from .journal import Journal

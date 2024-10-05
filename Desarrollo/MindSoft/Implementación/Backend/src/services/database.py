@@ -1,5 +1,5 @@
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
 
@@ -12,20 +12,20 @@ password = os.getenv("DB_PASSWORD")
 host = os.getenv("DB_HOST")
 database = os.getenv("DB_NAME")
 
-SQL_ALCHEMY_DATABASE_URL = f"mysql+asyncmy://{user}:{password}@{host}:3306/{database}"
+SQL_ALCHEMY_DATABASE_URL = f"mysql+pymysql://{user}:{password}@{host}:3306/{database}"
 
-engine = create_async_engine(SQL_ALCHEMY_DATABASE_URL, echo=True)
+engine = create_engine(SQL_ALCHEMY_DATABASE_URL, echo=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-async def create_tables():
-  async with engine.begin() as conn:
+def create_tables():
+  with engine.begin() as conn:
     from ..models import DaylyRating, Goal, GratitudeJournal, Journal, MoodRating, Mood, User, MoodRatingDetail
-    await conn.run_sync(Base.metadata.create_all)
+    Base.metadata.create_all(conn)
 
-async def get_db():
-  async with SessionLocal() as session:
+def get_db():
+  with SessionLocal() as session:
     yield session
     
