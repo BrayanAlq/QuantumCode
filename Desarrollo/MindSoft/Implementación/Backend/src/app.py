@@ -1,6 +1,4 @@
 from fastapi import FastAPI, Depends
-from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
 from typing import Optional
 
 from .services.database import create_tables

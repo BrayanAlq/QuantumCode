@@ -5,8 +5,6 @@ from ..schemas.user import UserCreate, UserLogin
 from ..services.database import get_db
 from ..controllers.login import register_user, login_user
 
-from ..utils.bcrypt import hash_password
-
 login_router = APIRouter()
 
 @login_router.post("/signup")

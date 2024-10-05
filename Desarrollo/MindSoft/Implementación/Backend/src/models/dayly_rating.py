@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Double, Date, ForeignKey
+from sqlalchemy import Column, Integer, Date, ForeignKey
 from sqlalchemy.orm import relationship
 
 from ..services.database import Base
