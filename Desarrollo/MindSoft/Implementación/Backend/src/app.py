@@ -5,11 +5,15 @@ from typing import Annotated
 
 from .services.database import create_tables
 
+from .routes.login import login_router
+
 app = FastAPI()
 
+app.include_router(login_router)
+
 @app.on_event("startup")
-async def startup():
-  await create_tables()
+def startup():
+  create_tables()
 
 @app.get("/helloworld")
 async def hello_world():
