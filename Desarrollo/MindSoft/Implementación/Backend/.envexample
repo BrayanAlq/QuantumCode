@@ -2,4 +2,3 @@ DB_USER=
 DB_PASSWORD=
 DB_HOST=localhost
 DB_NAME=mindsoft
-DB_PORT=3306
