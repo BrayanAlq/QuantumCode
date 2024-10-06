@@ -20,7 +20,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 def create_access_token(data: UserToJwt, expires_delta: int = None):
   to_encode = data.dict()
   if expires_delta:
-    expire = datetime.utcnow() + timedelta(seconds=expires_delta)
+    expire = datetime.utcnow() + timedelta(days=expires_delta)
   else:
     expire = datetime.utcnow() + timedelta(minutes=15)
   

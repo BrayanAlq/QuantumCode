@@ -45,6 +45,6 @@ async def login_user(user: UserLogin, db: Session):
     user_id=user_in_db.user_id,
     first_name=user_in_db.first_name,
     last_name=user_in_db.last_name
-  ))
+  ),expires_delta=7)
 
   return { "jwt": jwtoken }
