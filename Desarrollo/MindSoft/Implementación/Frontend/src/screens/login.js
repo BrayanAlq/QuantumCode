@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    width: '45%',
+    width: '50%',
     marginTop: 25,
   },
 
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     color: 'black', // Color del texto
     fontSize: 16,
     fontWeight: 'regular',
-    
+
   },
 
   userImage: {

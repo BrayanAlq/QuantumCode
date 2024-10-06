@@ -26,16 +26,18 @@ function MyStack() {
         }}
         />
 
+      <Stack.Screen name="Confirmacion" component={Confirmacion}
+      options={{
+        headerShown: false, 
+      }} />
+
       <Stack.Screen 
-          name="Welcom" 
+          name="Welcome" 
           component={PantallaBienvenida} 
           options={{ headerShown: false }}
         />
 
-      <Stack.Screen name="Confirmacion" component={Confirmacion}
-      options={{
-        headerShown: false, // Oculta el header solo en la pantalla de Home
-      }} />
+      
       
     </Stack.Navigator>
   );
