@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException
-from ..models import DaylyRating
+from ..models import DailyRating
 
 from ..services.database import get_db
+from ..models import DailyRating, User
 from ..schemas.daily_rating import DailyRatingCreate, DailyRatingResponse
 from ..schemas.user import UserToJwt
 from sqlalchemy.orm import Session
@@ -9,13 +10,17 @@ from sqlalchemy.orm import Session
 from ..utils.jwt_util import get_current_user
 
 def get_daily_rating(db: Session , user: UserToJwt):
-    daily_rating = db.query(DailyRatingResponse).filter(DailyRatingResponse.user_id == user.id).first()
+    daily_rating = db.query(DailyRating).filter(DailyRating.user_id == user.user_id).first()
     if not daily_rating:
         raise HTTPException(status_code=404, detail="Daily rating not found")
     return daily_rating
 
-def create_daily_rating(daily_rating: DailyRatingCreate, db: Session):
-    db_daily_rating = DailyRatingCreate
+def create_daily_rating(daily_rating: DailyRatingCreate, db: Session,user:UserToJwt):
+    db_daily_rating = DailyRating(
+        user_id=user.user_id,
+        rating=daily_rating.rating,
+        date=daily_rating.date
+    )
     db.add(db_daily_rating)
     db.commit()
     db.refresh(db_daily_rating)

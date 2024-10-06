@@ -16,5 +16,5 @@ def get_user_daily_rating(db: Session = Depends(get_db), user: UserToJwt = Depen
 
 @daily_rating_router.post("/user-daily_rating")
 def create_user_daily_rating(daily_rating: DailyRatingCreate, db: Session = Depends(get_db), user: UserToJwt = Depends(get_current_user)):
-    response = create_daily_rating(daily_rating, db)
+    response = create_daily_rating(daily_rating, db,user)
     return response

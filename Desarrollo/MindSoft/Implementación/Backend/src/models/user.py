@@ -15,7 +15,7 @@ class User(Base):
   faculty = Column(String(100))
   address = Column(String(100))
 
-  dayli_ratings = relationship("DaylyRating", back_populates="user")
+  daily_ratings = relationship("DailyRating", back_populates="user")
   goals = relationship("Goal", back_populates="user")
   journals = relationship("Journal", back_populates="user")
   gratitude_journals = relationship("GratitudeJournal", back_populates="user")
