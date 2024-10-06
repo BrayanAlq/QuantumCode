@@ -22,7 +22,7 @@ Base: DeclarativeMeta = declarative_base()
 
 def create_tables():
   with engine.begin() as conn:
-    from ..models import DaylyRating, Goal, GratitudeJournal, Journal, MoodRating, Mood, User, MoodRatingDetail
+    from ..models import DailyRating, Goal, GratitudeJournal, Journal, MoodRating, Mood, User, MoodRatingDetail
     Base.metadata.create_all(conn)
 
 def get_db():
