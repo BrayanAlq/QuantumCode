@@ -7,7 +7,7 @@ class GoalCreate(BaseModel):
     start_date: date
     
 class GoalUpdate(BaseModel):
-    status: int
+    goal_id: int
     
 class GoalResponse(BaseModel):
     goal_id: int
