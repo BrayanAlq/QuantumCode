@@ -30,8 +30,8 @@ export default function ListaObjetivos() {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: "2rem",
-    fontWeight: "bold",
+    fontSize: 32,
+    fontWeight: '800',
     color: "#0B72D2",
   },
   container: {
