@@ -1,53 +1,21 @@
-import { StyleSheet, Text, View } from "react-native";
-import { CalendarIcon, EditIcon, TrashIcon, PlusIcon } from "../../../icons";
-import { Path, Svg } from "react-native-svg";
+import { Text, View } from "react-native";
+import { CalendarIcon, EditIcon, TrashIcon, CheckIcon } from "../../../icons";
 
 export function ContainerObjetivo({ item }) {
   return (
-    <View style={styles.container}>
-      <View style={styles.descriptionContainer} >
-        <CalendarIcon style={styles.icon} />
+    <View className="rounded-xl justify-between p-4 bg-white w-full h-36 mb-4">
+      <View className="flex-row gap-2">
+        <CalendarIcon className="text-black" />
         <Text>{item.titulo}</Text>
       </View>
-      <View style={styles.flexContainer}>
+      <View className="flex-row justify-between items-center">
         <Text>Fecha: {item.fecha}</Text>
-        <View style={styles.actionsContainer}>
-          <PlusIcon style={styles.icon} />
-          <EditIcon style={styles.icon} />
-          <TrashIcon style={styles.icon} />
+        <View className="flex-row gap-2">
+          <CheckIcon className="text-black" />
+          <EditIcon className="text-black" />
+          <TrashIcon className="text-black" />
         </View>
       </View>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 4,
-    padding: 16,
-    backgroundColor: "#fff",
-    width: "100%",
-    height: 140,
-    marginVertical: 8,
-  },
-  descriptionContainer: {
-    flex: 1,
-    flexDirection: "row",
-    gap: 8,
-  },
-  flexContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  actionsContainer: {
-    display: "flex",
-    flexDirection: "row",
-    gap: 8,
-    color: "red",
-  },
-  icon: {
-    color: "black"
-  }
-});

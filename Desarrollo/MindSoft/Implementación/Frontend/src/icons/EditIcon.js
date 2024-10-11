@@ -1,6 +1,6 @@
 import { Path, Svg } from "react-native-svg";
 
-export function EditIcon({ style }) {
+export function EditIcon(props) {
   return (
     <Svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,8 +12,7 @@ export function EditIcon({ style }) {
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="icon icon-tabler icons-tabler-outline icon-tabler-edit"
-      style={style}
+      {...props}
     >
       <Path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <Path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />

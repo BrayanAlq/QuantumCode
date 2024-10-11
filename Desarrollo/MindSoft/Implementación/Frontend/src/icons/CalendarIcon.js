@@ -1,6 +1,6 @@
 import { Path, Svg } from "react-native-svg";
 
-export function CalendarIcon({ style }) {
+export function CalendarIcon(props) {
   return (
     <Svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,7 +12,7 @@ export function CalendarIcon({ style }) {
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
-      style={style}
+      {...props}
     >
       <Path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <Path d="M11.5 21h-5.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v6" />
