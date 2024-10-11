@@ -9,11 +9,10 @@ class GoalCreate(BaseModel):
 class GoalUpdate(BaseModel):
     goal_id: int
     goal_name: str
-    goal_duration: int
+    duration_days: int
     
 class GoalUpdateStatus(BaseModel):
     goal_id: int
-    status: int
     
 class GoalResponse(BaseModel):
     goal_id: int
@@ -21,8 +20,3 @@ class GoalResponse(BaseModel):
     duration_days: int
     start_date: date
     status: int
-    
-    
-    
-    
-    
