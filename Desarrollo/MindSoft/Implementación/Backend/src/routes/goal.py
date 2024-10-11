@@ -3,15 +3,20 @@ from sqlalchemy.orm import Session
 
 from ..schemas.goal import GoalCreate, GoalUpdate, GoalUpdateStatus
 from ..services.database import get_db
-from ..controllers.goal import create_goal, update_goal, get_active_goal, complete_goal, delete_goal
+from ..controllers.goal import create_goal, update_goal, get_active_goal, complete_goal, delete_goal, get_complete_goal
 from ..schemas.user import UserToJwt
 from ..utils.jwt_util import get_current_user
 
 goal_router = APIRouter()
 
-@goal_router.get("/goal-get")
+@goal_router.get("/goal-active")
 def get_user_goals(db: Session = Depends(get_db), user: UserToJwt = Depends(get_current_user)):
     response = get_active_goal(db, user)
+    return response
+
+@goal_router.get("/goal-complete")
+def get_user_complete_goals(db: Session = Depends(get_db), user: UserToJwt = Depends(get_current_user)):
+    response = get_complete_goal(db, user)
     return response
 
 @goal_router.post("/goal-create")

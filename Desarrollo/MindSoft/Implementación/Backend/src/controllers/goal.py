@@ -12,6 +12,11 @@ def get_active_goal(db: Session, user: UserToJwt):
         return {"message":"This user doesn't have any active goal"}
     return active_goals_user
 
+def get_complete_goal(db: Session, user: UserToJwt):
+    complete_goals_user = db.query(Goal).filter(Goal.user_id == user.user_id).filter(Goal.status == 1).all()
+    if not complete_goals_user:
+        return {"message":"This user doesn't have any completed goal"}
+    return complete_goals_user
 def create_goal(goal: GoalCreate, db: Session,user:UserToJwt):
     db_goal = Goal(
         goal_name=goal.goal_name,
