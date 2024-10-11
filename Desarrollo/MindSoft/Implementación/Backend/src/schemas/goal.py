@@ -14,9 +14,3 @@ class GoalUpdate(BaseModel):
 class GoalUpdateStatus(BaseModel):
     goal_id: int
     
-class GoalResponse(BaseModel):
-    goal_id: int
-    goal_name: str
-    duration_days: int
-    start_date: date
-    status: int

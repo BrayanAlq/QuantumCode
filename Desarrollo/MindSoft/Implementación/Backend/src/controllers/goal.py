@@ -1,10 +1,9 @@
-from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 
 from ..models import Goal
 from ..schemas.user import UserToJwt
-from ..schemas.goal import GoalCreate, GoalResponse, GoalUpdate, GoalUpdateStatus
+from ..schemas.goal import GoalCreate, GoalUpdate, GoalUpdateStatus
 
 
 def get_active_goal(db: Session, user: UserToJwt):

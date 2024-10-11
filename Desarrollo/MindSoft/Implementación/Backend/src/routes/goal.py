@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from ..schemas.goal import GoalCreate, GoalResponse, GoalUpdate, GoalUpdateStatus
+from ..schemas.goal import GoalCreate, GoalUpdate, GoalUpdateStatus
 from ..services.database import get_db
 from ..controllers.goal import create_goal, update_goal, get_active_goal, complete_goal, delete_goal
 from ..schemas.user import UserToJwt
