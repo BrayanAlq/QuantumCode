@@ -48,3 +48,14 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_
 
   user = db.query(User).filter(User.username == username).first()
   return user
+
+def check_token(token: str):
+  try:
+    payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+    return { "message": "token verified" }
+  except JWTError:
+    raise HTTPException(
+      status_code=status.HTTP_401_UNAUTHORIZED,
+      detail="Could not validate credentials",
+      headers={"WWW-Authenticate": "Bearer"},
+    )
