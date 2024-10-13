@@ -35,10 +35,10 @@ async def login_user(user: UserLogin, db: Session):
   user_in_db = db.query(User).filter(User.username == user.username).first()
 
   if user_in_db is None:
-    raise HTTPException(status_code=404, detail="username not found")
+    raise HTTPException(status_code=404, detail="El usuario no existe")
 
   if not verify_password(user.password, user_in_db.password):
-    raise HTTPException(status_code=401, detail="invalid password")
+    raise HTTPException(status_code=401, detail="Contraseña incorrecta")
 
   jwtoken = create_access_token(UserToJwt(
     username=user_in_db.username,

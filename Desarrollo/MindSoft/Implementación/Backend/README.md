@@ -9,5 +9,5 @@ CREATE DATABASE mindsoft;
 ```
 4. Ejecutar el servidor
 ```
-uvicorn src.app:app --port 5432 --reload
+uvicorn src.app:app --host 0.0.0.0 --port 5432 --reload
 ```

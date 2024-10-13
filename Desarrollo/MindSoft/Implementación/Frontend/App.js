@@ -5,61 +5,49 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 //import Login from './src/screens/LoginScreen'; // Pantalla de login que puedes crear
 
-import PantallaBienvenida from './src/screens/bienvenida'; 
+import PantallaBienvenida from './src/screens/bienvenida';
 import login from './src/screens/login';
 import Confirmacion from './src/screens/Confirmacion';
 import NuevoObjetivo from './src/screens/nuevo_objetivo';
 import ModificarObjetivo from './src/screens/mod_objetivo';
 
 export default function App() {
-  
+
   const Stack = createStackNavigator();
 
   function MyStack() {
     return (
-      <Stack.Navigator initialRouteName="NuevoObjetivo">
+      <Stack.Navigator>
 
-        <Stack.Screen 
-          name="login" 
-          component={login} 
+        <Stack.Screen name="login" component={login}
           options={{
             title: "",
-            headerTintColor: "white",
-            headerTitleAlign: "center",
+            headerTinteColor: "white",
+            headerTitleAling: "center",
             headerStyle: { backgroundColor: "#0B72D2" },
           }}
         />
 
-        <Stack.Screen 
-          name="Confirmacion" 
-          component={Confirmacion}
-          options={{ headerShown: false }} 
+        <Stack.Screen name="Confirmacion" component={Confirmacion}
+          options={{
+            headerShown: false,
+          }} />
+
+        <Stack.Screen
+          name="Welcome"
+          component={PantallaBienvenida}
+          options={{ headerShown: false }}
         />
 
-        <Stack.Screen 
-          name="Welcome" 
-          component={PantallaBienvenida} 
-          options={{ headerShown: false }} 
-        />
-        
-        <Stack.Screen 
-          name="NuevoObjetivo" 
-          component={NuevoObjetivo} 
-          options={{ title: 'Nuevo Objetivo', headerShown: false }} 
-        />
-        
-        <Stack.Screen
-          name="ModificarObjetivo"
-          component={ModificarObjetivo}
-          options={{ title: 'Modificar Objetivo', headerShown: false }} 
-        />
+
+
       </Stack.Navigator>
     );
   }
 
   return (
     <NavigationContainer>
-      <MyStack/>
+      <MyStack />
     </NavigationContainer>
   );
 }
