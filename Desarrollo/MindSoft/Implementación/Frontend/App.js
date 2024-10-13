@@ -8,6 +8,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import PantallaBienvenida from './src/screens/bienvenida';
 import login from './src/screens/login';
 import Confirmacion from './src/screens/Confirmacion';
+import NuevoObjetivo from './src/screens/nuevo_objetivo';
+import ModificarObjetivo from './src/screens/mod_objetivo';
 
 export default function App() {
 
