@@ -8,7 +8,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import PantallaBienvenida from './src/screens/bienvenida';
 import login from './src/screens/login';
 import Confirmacion from './src/screens/Confirmacion';
-import ListaObjetivos from './src/components/listaObjetivos/ListaObjetivos';
 
 export default function App() {
 
@@ -34,7 +33,7 @@ export default function App() {
 
         <Stack.Screen
           name="Welcome"
-          component={ListaObjetivos}
+          component={PantallaBienvenida}
           options={{ headerShown: false }}
         />
 
