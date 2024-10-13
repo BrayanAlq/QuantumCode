@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, View, TextInput, Button, TouchableOpacity, Image } from 'react-native';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
+import { useLogin, useVerifyToken } from '../hooks/useAuth';
+import { Alert } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
 
 const logo = require("../../assets/usuario.png");
 const logo2 = require("../../assets/candado.png");
@@ -10,13 +14,43 @@ export default function Login() {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { loginUser, loading, error, token } = useLogin();
+  const { verifyToken, loading: loadingToken, isOk } = useVerifyToken();
+
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await SecureStore.getItemAsync('authToken')
+      if (token) {
+        verifyToken(token)
+      }
+    }
+    checkToken()
+  }, [])
+
+  useEffect(() => {
+    if (isOk) {
+      navigation.navigate('Confirmacion')
+    }
+  }, [isOk])
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert(
+        "Error de inicio de sesión",
+        error,
+        [{test: 'OK'}]
+      )
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (token) {
+      navigation.navigate('Confirmacion')
+    }
+  }, [token])
 
   const handleLogin = () => {
-    // Aquí puedes manejar la lógica de inicio de sesión
-    console.log('Email:', email);
-    console.log('Password:', password);
-   
-    navigation.navigate('Confirmacion'); 
+    loginUser(email, password);
   };
 
   return (
