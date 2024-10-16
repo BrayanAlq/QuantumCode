@@ -1,11 +1,23 @@
 
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import CalificacionDiaria from '../components/CalificacionDiaria'; // Importamos el componente
+import * as SecureStore from 'expo-secure-store';
 
 
 export default function PantallaBienvenida() {
   const [emojiPopupVisible, setEmojiPopupVisible] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+        // Elimina el token
+        await SecureStore.deleteItemAsync('authToken');
+        Alert.alert('Has cerrado sesión con éxito');
+    } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+        Alert.alert('Error', 'No se pudo cerrar sesión');
+    }
+};
 
   return (
     <View style={styles.container}>
@@ -24,6 +36,12 @@ export default function PantallaBienvenida() {
         <Text style={styles.buttonText}>Seleccionar emociones</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity 
+        style={styles.openButton}
+        onPress={handleLogout}
+      >
+        <Text style={styles.buttonText}>Cerrar Sesión</Text>
+      </TouchableOpacity>
 
       <CalificacionDiaria
         visible={emojiPopupVisible}

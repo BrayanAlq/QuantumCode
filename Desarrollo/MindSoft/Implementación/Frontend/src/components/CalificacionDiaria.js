@@ -1,15 +1,47 @@
 
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, Alert } from 'react-native';
+import { useDailyRating } from '../hooks/useDailyRating';
+import * as SecureStore from 'expo-secure-store';
 
 export default function CalificacionDiaria({ visible, onClose }) {
   const [selectedFeeling, setSelectedFeeling] = useState('');
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const { submitDailyRating, loading, error } = useDailyRating();
 
   const emojisCalif = ['💀', '😢', '😕', '🙂', '😊'];
   const emojisAnimo = ['😭', '🤔', '😕', '😠', '💀', '🤩', '🥲', '😳', '🥳'];
 
+  const emojiToRating = {
+    '💀': 1,
+    '😢': 2,
+    '😕': 3,
+    '🙂': 4,
+    '😊': 5,
+  };
+
   const handleSelect = (emoji) => {
     setSelectedFeeling(emoji);
+  };
+
+  const handleSubirCalificacion = async () => {
+    const token = await SecureStore.getItemAsync('authToken');
+    const rating = emojiToRating[selectedFeeling];
+  
+    if (!rating) {
+      Alert.alert('Por favor selecciona un emoji');
+      return;
+    }
+  
+    const response = await submitDailyRating(rating, date, token);
+  
+    if (response && !response.error) {
+      Alert.alert('Calificación enviada con éxito');
+      setSelectedFeeling(''); // Reiniciar la selección
+      onClose();
+    } else {
+      Alert.alert('Error', response.error || 'Algo salió mal');
+    }
   };
 
   return (
@@ -41,7 +73,7 @@ export default function CalificacionDiaria({ visible, onClose }) {
             ))}
           </View>
           </View>
-          <TouchableOpacity style={styles.submitButton} onPress={onClose}>
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubirCalificacion}>
             <Text style={styles.submitText}>Enviar</Text>
           </TouchableOpacity>
 
