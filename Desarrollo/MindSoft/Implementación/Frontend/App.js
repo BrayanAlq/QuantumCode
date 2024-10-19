@@ -10,6 +10,7 @@ import login from './src/screens/login';
 import Confirmacion from './src/screens/Confirmacion';
 import NuevoObjetivo from './src/screens/nuevo_objetivo';
 import ModificarObjetivo from './src/screens/mod_objetivo';
+import SeguimientoObjetivo from './src/screens/seg_objetivos';
 
 export default function App() {
 
@@ -17,9 +18,11 @@ export default function App() {
 
   function MyStack() {
     return (
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName='login'>
 
-        <Stack.Screen name="login" component={login}
+        <Stack.Screen
+          name="login"
+          component={login}
           options={{
             title: "",
             headerTinteColor: "white",
@@ -28,10 +31,11 @@ export default function App() {
           }}
         />
 
-        <Stack.Screen name="Confirmacion" component={Confirmacion}
-          options={{
-            headerShown: false,
-          }} />
+        <Stack.Screen
+          name="Confirmacion"
+          component={Confirmacion}
+          options={{ headerShown: false,}}
+        />
 
         <Stack.Screen
           name="Welcome"
@@ -39,7 +43,23 @@ export default function App() {
           options={{ headerShown: false }}
         />
 
+        <Stack.Screen 
+          name="SeguimientoObjetivo" 
+          component={SeguimientoObjetivo} 
+          options={{ headerShown: false }}
+        />
 
+        <Stack.Screen 
+          name="NuevoObjetivo" 
+          component={NuevoObjetivo} 
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen 
+          name="ModificarObjetivo" 
+          component={ModificarObjetivo} 
+          options={{ headerShown: false }}
+        />
 
       </Stack.Navigator>
     );

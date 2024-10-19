@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import CalificacionDiaria from '../components/CalificacionDiaria'; // Importamos el componente
 import * as SecureStore from 'expo-secure-store';
+import { useNavigation } from '@react-navigation/native'; 
 
 
 export default function PantallaBienvenida() {
   const [emojiPopupVisible, setEmojiPopupVisible] = useState(false);
+  const navigation = useNavigation();
 
   const handleLogout = async () => {
     try {
@@ -38,11 +40,18 @@ export default function PantallaBienvenida() {
 
       <TouchableOpacity 
         style={styles.openButton}
+        onPress={() => navigation.navigate('SeguimientoObjetivo')}
+      >
+        <Text style={styles.buttonText}>Lista de Objetivos</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.openButton}
         onPress={handleLogout}
       >
         <Text style={styles.buttonText}>Cerrar Sesión</Text>
       </TouchableOpacity>
-
+      
       <CalificacionDiaria
         visible={emojiPopupVisible}
         onClose={() => setEmojiPopupVisible(false)}
