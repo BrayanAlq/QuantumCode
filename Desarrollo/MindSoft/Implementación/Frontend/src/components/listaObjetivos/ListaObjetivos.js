@@ -1,29 +1,58 @@
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import React, { useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { ContainerObjetivo } from "./components";
+import { useGoals } from "../../hooks/useGoal"
+import { PlusCircleIcon } from "../../icons/PlusCircleIcon"
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 
 export default function ListaObjetivos() {
-  const data = [
-    { id: 1, titulo: "Objetivo 1", fecha: "2021-01-01" },
-    { id: 2, titulo: "Objetivo 2", fecha: "2021-01-02" },
-    { id: 3, titulo: "Objetivo 3", fecha: "2021-01-03" },
-    { id: 4, titulo: "Objetivo 4", fecha: "2021-01-04" },
-    { id: 5, titulo: "Objetivo 5", fecha: "2021-01-05" },
-    { id: 6, titulo: "Objetivo 6", fecha: "2021-01-06" },
-    { id: 7, titulo: "Objetivo 7", fecha: "2021-01-07" },
-    { id: 8, titulo: "Objetivo 8", fecha: "2021-01-08" },
-    { id: 9, titulo: "Objetivo 9", fecha: "2021-01-09" },
-    { id: 10, titulo: "Objetivo 10", fecha: "2021-01-10" },
-  ]
+  const { goals, loading, error, fetchGoals } = useGoals();
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchGoals(); // Llama a fetchGoals cada vez que la pantalla está en foco
+    }, [fetchGoals])
+  );
+
+  useEffect(() => {
+    fetchGoals(); // Llama a fetchGoals al montar el componente
+  }, []);
+
+  useEffect(() => {
+    if (route.params?.refresh) {
+      fetchGoals(); // Llama a fetchGoals si hay un parámetro de refresco
+    }
+  }, [route.params?.refresh]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Lista de Objetivos</Text>
       <FlatList
         style={styles.listaObjetivos}
-        data={data}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => <ContainerObjetivo item={item} />}
+        data={goals}
+        keyExtractor={item => item.goal_id.toString()}
+        renderItem={({ item }) => (
+        <ContainerObjetivo
+          item={{
+            titulo: item.goal_name,
+            fecha: item.start_date,
+            goal_id: item.goal_id,
+            plazo: item.duration_days,
+          }}
+          navigation={navigation}
+          />
+        )}
       />
+      <TouchableOpacity 
+        style={styles.addButton} 
+        onPress={() => navigation.navigate('NuevoObjetivo', { userId: 'ID_DEL_USUARIO' })} // Reemplaza 'ID_DEL_USUARIO' con el ID real
+      >
+        <PlusCircleIcon
+          size={72}
+          color="#0B72D2" />
+      </TouchableOpacity>
     </View>
   )
 }

@@ -1,15 +1,43 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, Modal, FlatList, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useGoals } from "../hooks/useGoal"
 
-export default function ModificarObjetivo({ navigation }) {
+export default function ModificarObjetivo({ navigation,route }) {
+    const { goalId, title, date, time } = route.params;
     const [objetivo, setObjetivo] = useState('');
     const [tiempo, setTiempo] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
+    const { updateGoal } = useGoals();
 
-    const modificarObjetivo = () => {
-        console.log("Objetivo modificado:", objetivo);
-        setObjetivo('');
+    useEffect(() => {
+        setObjetivo(title);
+        setTiempo(time.toString());
+    }, [title, time]);
+
+    const handleSelectTiempo = (value) => {
+        setTiempo(value);
+        setModalVisible(false);
     };
+
+    const cantidadOptions = Array.from({ length: 50 }, (_, i) => (i + 1).toString());
+
+    const modificarObjetivo = async () => {
+        try {
+            const updatedData = {
+                goal_id: goalId,
+                goal_name: objetivo,
+                duration_days: parseInt(tiempo, 10),
+            };
+            await updateGoal(updatedData);
+            
+            Alert.alert('Éxito', 'Objetivo modificado correctamente');
+            navigation.goBack();
+        } catch (error) {
+            Alert.alert('Error', 'No se pudo modificar el objetivo: ' + error.message);
+        }
+    };
+    
 
     const regresar = () => {
         navigation.goBack();
@@ -31,29 +59,41 @@ export default function ModificarObjetivo({ navigation }) {
             </View>
             
             <View style={styles.inputContainer}>
-                <TouchableOpacity onPress={modificarObjetivo} style={styles.checkButton}>
-                    <Ionicons name="checkmark-done" size={24} color="black" />
-                </TouchableOpacity>
+                <Ionicons
+                  style={styles.check}
+                  name="checkmark-done"
+                  size={24}
+                  color="black"
+                />
                 <TextInput 
-                    style={styles.input}
-                    placeholder="Modifique su objetivo"
-                    value={objetivo}
-                    onChangeText={setObjetivo}
+                  style={styles.input}
+                  placeholder="Modifique su objetivo"
+                  value={objetivo}
+                  onChangeText={setObjetivo}
                 />
                 <Text style={styles.dateText}>Fecha: {new Date().toLocaleDateString()}</Text>
             </View>
 
             <View style={styles.inputTiempoContainer}>
+                <Text
+                    style={styles.text}
+                >
+                Nuevo plazo:
+                </Text>
                 <TextInput 
                     style={styles.inputTiempo}
-                    placeholder="Nuevo plazo: "
+                    placeholder="Ej. 5"
                     value={tiempo}
                     onChangeText={setTiempo}
+                    keyboardType="numeric"
                 />
-                <TouchableOpacity style={styles.dropdownButton}>
+                <TouchableOpacity 
+                    style={styles.dropdownButton}
+                    onPress={() => setModalVisible(true)}
+                >
                     <Ionicons name="caret-down-circle" size={24} color="#FFD166" />
                 </TouchableOpacity>
-                <Text style={styles.textDia}>días</Text>
+                <Text style={styles.text}>días</Text>
             </View>
 
             <TouchableOpacity 
@@ -69,86 +109,112 @@ export default function ModificarObjetivo({ navigation }) {
             >
                 <Text style={styles.buttonText}>Ver Lista</Text>
             </TouchableOpacity>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <FlatList
+                      data={cantidadOptions}
+                      keyExtractor={(item) => item}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity 
+                          style={styles.optionButton} 
+                          onPress={() => handleSelectTiempo(item)}
+                        >
+                      <Text style={styles.text}>{item}</Text>
+                        </TouchableOpacity>
+                      )}
+                    />
+                    <TouchableOpacity 
+                      style={styles.closeButton} 
+                      onPress={() => setModalVisible(false)}
+                    >
+                      <Text style={styles.text}>Cerrar</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#0B72D2',
-        height: 51,
-        padding: 10,
-    },
-    separator: {
-        width: 2,
-        height: 51,
-        backgroundColor: 'white',
-        marginHorizontal: 10,
-    },
     container: {
         flex: 1,
         backgroundColor: '#ADC0D1',
     },
+
+    header: {
+        flexDirection: 'row',
+        backgroundColor: '#0B72D2',
+        height: 50,
+        padding: 10,
+    },
+
+    separator: {
+        width: 4,
+        height: 50,
+        backgroundColor: '#ADC0D1',
+        marginHorizontal: 10,
+    },
+
     title: {
         alignItems: 'center',
     },
+    
     titleText: {
         fontSize: 40,
-        top: -15,
-        marginBottom: 20,
+        marginBottom: 15,
         fontWeight: 'bold',
         color: '#0B72D2',
-        textAlign: 'center',
     },
+
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        width: '90%',
-        marginBottom: 30,
-        marginLeft: 20,
+        width: 'auto',
+        marginBottom: 20,
+        marginHorizontal: 20,
         borderColor: 'black',
         borderWidth: 2,
         borderRadius: 10,
         backgroundColor: 'white',
-        padding: 10,
+        paddingHorizontal: 10,
     },
     input: {
         height: 50,
-        width: '100%',
-        marginBottom: 10,
+        width: 'auto',
+        marginBottom: 20,
     },
-    checkButton: {
+
+    check: {
         padding: 10,
     },
+
     dateText: {
-        fontSize: 12,
+        fontSize: 15,
         position: 'absolute',
         color: 'black',
         bottom: 5,
-        right: 20,
+        right: 10,
     },
     verListaButton: {
         backgroundColor: '#0B72D2',
-        marginTop: 50,
-        padding: 15, // Aumentar el padding
+        marginTop: 20,
+        padding: 15,
         borderRadius: 10,
         marginLeft: 20,
         alignSelf: 'flex-start',
     },
     registrarButton: {
         backgroundColor: '#FFD166',
-        marginTop: 10,
-        padding: 15, // Aumentar el padding
+        marginTop: 20,
+        padding: 15,
         borderRadius: 10,
         marginLeft: 20,
         alignSelf: 'flex-start',
-    },
-    buttonText: {
-        color: 'black',
-        fontSize: 18,
-        textAlign: 'center', // Centrar el texto en el botón
     },
     icon1: {
         width: 150,
@@ -157,20 +223,21 @@ const styles = StyleSheet.create({
     inputTiempoContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        width: 270, // Cambiar a '95%' para mayor espacio
+        alignSelf: 'flex-start',
+        width: 'auto',
         height: 50,
-        marginBottom: 10,
-        marginLeft: 20,
+        marginHorizontal: 20,
         borderColor: 'black',
         borderWidth: 2,
         borderRadius: 10,
         backgroundColor: 'white',
-        paddingLeft: 10,
+        paddingHorizontal: 10,
     },
+
     inputTiempo: {
-        width: 150, // Aumentar el ancho para mayor espacio
-        height: 50, // Asegurarse de que tenga la misma altura que el contenedor
+        marginLeft: 10,
     },
+
     dropdownButton: {
         backgroundColor: 'black',
         borderRadius: 80,
@@ -178,11 +245,31 @@ const styles = StyleSheet.create({
         height: 25,
         alignItems: 'center',
         justifyContent: 'center',
-        marginLeft: 10,
+        marginHorizontal: 10,
     },
-    textDia: {
-        fontSize: 12,
+    
+    text: {
+        fontSize: 15,
         color: 'black',
-        marginLeft: 10,
+    },
+
+    modalContainer: {
+        flex: 1,
+        width: 80,
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    optionButton: {
+        padding: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        width: 80,
+    },
+
+    closeButton: {
+        padding: 10,
+        backgroundColor: '#0B72D2',
+        borderRadius: 10,
     },
 });
