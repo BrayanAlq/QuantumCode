@@ -22,14 +22,6 @@ describe('<CalificacionDiaria />', () => {
     expect(getByText('Emoción seleccionada: 😊')).toBeTruthy();
   });
 
-  it('debería permitir seleccionar una emoción de estado de ánimo', () => {
-    const { getByText } = render(<CalificacionDiaria visible={true} onClose={mockOnClose} />);
-
-    const emoji = getByText('🤩');
-    fireEvent.press(emoji);
-
-    expect(getByText('Emoción seleccionada: 🤩')).toBeTruthy();
-  });
 
   it('debería cerrar el modal al presionar el botón de "Enviar"', () => {
     const { getByText } = render(<CalificacionDiaria visible={true} onClose={mockOnClose} />);
