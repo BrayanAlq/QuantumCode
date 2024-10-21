@@ -8,7 +8,7 @@ from src.schemas.user import UserToJwt
 
 client = TestClient(app)
 
-# Creación de un mock para User
+
 def create_user_mock():
     user_mock = MagicMock(spec=UserToJwt)
     user_mock.user_id = 1
@@ -17,7 +17,7 @@ def create_user_mock():
     user_mock.last_name = "User"
     return user_mock
 
-# Prueba unitaria para obtener la calificación diaria de un usuario
+
 def test_get_user_daily_rating():
     db_mock = MagicMock()
     user_mock = create_user_mock()
@@ -27,12 +27,12 @@ def test_get_user_daily_rating():
     assert response is not None
     db_mock.query.assert_called()
 
-# Prueba unitaria para crear una calificación diaria de un usuario
+
 def test_create_user_daily_rating():
     db_mock = MagicMock()
     user_mock = create_user_mock()
 
-    # Se crea un mock de la calificación diaria
+
     daily_rating_mock = DailyRatingCreate(rating=5, date="2024-10-20")
 
     response = create_user_daily_rating(daily_rating=daily_rating_mock, db=db_mock, user=user_mock)
