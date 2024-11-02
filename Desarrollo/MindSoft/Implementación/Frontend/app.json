@@ -24,7 +24,7 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "apiUrl": ""
+      "apiUrl": "http://192.168.1.36:5432"
     },
     "plugins": [
       "expo-secure-store"

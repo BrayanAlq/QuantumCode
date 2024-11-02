@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useDailyRating } from '../hooks/useDailyRating';
 import * as SecureStore from 'expo-secure-store';
 
 export default function CalificacionDiaria({ visible, onClose }) {
+  const navigation = useNavigation();
   const [selectedFeeling, setSelectedFeeling] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const { submitDailyRating, loading, error } = useDailyRating();
@@ -39,6 +41,7 @@ export default function CalificacionDiaria({ visible, onClose }) {
       Alert.alert('Calificación enviada con éxito');
       setSelectedFeeling(''); // Reiniciar la selección
       onClose();
+      navigation.navigate('SeguimientoObjetivo');
     } else {
       Alert.alert('Error', response.error || 'Algo salió mal');
     }
