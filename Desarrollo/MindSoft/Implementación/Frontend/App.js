@@ -12,6 +12,8 @@ import NuevoObjetivo from './src/screens/nuevo_objetivo';
 import ModificarObjetivo from './src/screens/mod_objetivo';
 import SeguimientoObjetivo from './src/screens/seg_objetivos';
 import Recomendacion from './src/screens/recomendaciones';
+import Notas from './src/screens/diario_notas';
+import AgregarNotas from './src/screens/diario_agregar';
 
 export default function App() {
 
@@ -67,7 +69,20 @@ export default function App() {
           component={Recomendacion} 
           options={{ headerShown: false }}/>
 
+        <Stack.Screen
+          name="DiarioNotas" 
+          component={Notas} 
+          options={{ headerShown: false }}/>
+
+        <Stack.Screen
+          name="AgregarNotas" 
+          component={AgregarNotas} 
+          options={{ headerShown: false }}/>
+
+
         </Stack.Navigator>
+
+
 
     );
   }
