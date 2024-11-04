@@ -11,6 +11,7 @@ import Confirmacion from './src/screens/Confirmacion';
 import NuevoObjetivo from './src/screens/nuevo_objetivo';
 import ModificarObjetivo from './src/screens/mod_objetivo';
 import SeguimientoObjetivo from './src/screens/seg_objetivos';
+import Recomendacion from './src/screens/recomendaciones';
 
 export default function App() {
 
@@ -61,7 +62,13 @@ export default function App() {
           options={{ headerShown: false }}
         />
 
-      </Stack.Navigator>
+        <Stack.Screen
+          name="Recomendacion" 
+          component={Recomendacion} 
+          options={{ headerShown: false }}/>
+
+        </Stack.Navigator>
+
     );
   }
 
