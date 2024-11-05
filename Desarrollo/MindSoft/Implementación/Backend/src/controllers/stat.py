@@ -45,3 +45,17 @@ def get_rating_days(db: Session, user: UserToJwt):
     if not average_ratings:
         raise HTTPException(status_code=404, detail="Rating days not found")
     return average_ratings
+
+def get_rating_days_by_month(db: Session, user: UserToJwt, month_stats: MonthStats):
+    month = month_stats.date.month
+    year = month_stats.date.year
+    average_ratings = (
+        db.query(func.avg(DailyRating.rating).label("average_rating"))
+        .filter(DailyRating.user_id == user.user_id)
+        .filter(extract('month', DailyRating.date) == month)
+        .filter(extract('year', DailyRating.date) == year)
+        .first()
+    )
+    if not average_ratings:
+        raise HTTPException(status_code=404, detail="Rating days not found")
+    return average_ratings
