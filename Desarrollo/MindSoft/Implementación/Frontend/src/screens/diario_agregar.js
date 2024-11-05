@@ -6,6 +6,7 @@ import { EnviarNota } from '../icons/EnviarNota';
 export default function AgregarNotas() {
     const [currentMonth, setCurrentMonth] = useState('');
     const [inputHeight, setInputHeight] = useState(40); // Altura inicial del TextInput
+    const [text, setText] = useState(''); // Estado para almacenar el texto del TextInput
 
     useEffect(() => {
         const date = new Date();
@@ -15,6 +16,12 @@ export default function AgregarNotas() {
         ];
         setCurrentMonth(monthNames[date.getMonth()]);
     }, []);
+
+    const handleSend = () => {
+        // Aquí puedes agregar la lógica para enviar la nota
+        // Después de enviar, limpiamos el campo de texto
+        setText('');
+    };
 
     return (
         <View style={styles.container}>
@@ -30,16 +37,16 @@ export default function AgregarNotas() {
                     style={[styles.boxText, { height: inputHeight }]}
                     placeholder="Escriba sobre su día"
                     multiline
+                    value={text} // Asociamos el estado `text` al valor del TextInput
+                    onChangeText={setText} // Actualizamos el estado `text` con el valor ingresado
                     onContentSizeChange={(event) => 
                         setInputHeight(event.nativeEvent.contentSize.height)
                     }
                 />
             </View>
-            <TouchableOpacity
-            >
+            <TouchableOpacity onPress={handleSend} style={styles.EnviarNota}>
                 <EnviarNota
-                height="80"
-                style={{ marginTop: 490, marginLeft: 290 }}
+                    height="80"
                 />
             </TouchableOpacity>
         </View>
@@ -96,4 +103,10 @@ const styles = StyleSheet.create({
         color: 'black',
         textAlign: 'left',
     },
+    EnviarNota:{
+        position: 'absolute',
+        marginTop: 715,
+        marginLeft: 300,
+    }
+
 });
