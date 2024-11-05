@@ -1,10 +1,5 @@
 from pydantic import BaseModel
 from datetime import date
 
-class MouthStats(BaseModel):
-    id_user: int
+class MonthStats(BaseModel):
     date: date
-    
-class AllStats(BaseModel):
-    id_user: int
-    
