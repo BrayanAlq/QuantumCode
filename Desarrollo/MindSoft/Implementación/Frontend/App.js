@@ -14,7 +14,7 @@ import SeguimientoObjetivo from './src/screens/seg_objetivos';
 import Notas from './src/screens/diario_notas';
 import AgregarNotas from './src/screens/diario_agregar';
 import Estadisticas from './src/screens/estadisticas';
-import Pruebas from './src/screens/pruebas';
+
 
 export default function App() {
 
@@ -22,7 +22,7 @@ export default function App() {
 
   function MyStack() {
     return (
-      <Stack.Navigator initialRouteName='Estadisticas'>
+      <Stack.Navigator initialRouteName='login'>
 
         <Stack.Screen
           name="login"
@@ -78,11 +78,6 @@ export default function App() {
         <Stack.Screen
           name="Estadisticas" 
           component={Estadisticas} 
-          options={{ headerShown: false }}/>
-
-        <Stack.Screen
-          name="Pruebas" 
-          component={Pruebas} 
           options={{ headerShown: false }}/>
         
         </Stack.Navigator>
