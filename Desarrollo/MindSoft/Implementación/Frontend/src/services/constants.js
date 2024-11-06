@@ -1,3 +1,3 @@
-import { API_URL as API_URL_ENV } from '@env'
+import { API_URL } from '@env'
 
-export const API_URL = API_URL_ENV
+export const API_URL_TEST = API_URL
