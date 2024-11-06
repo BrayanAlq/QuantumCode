@@ -46,18 +46,28 @@ def get_moods_stats(db: Session, user: UserToJwt):
     return all_stats_dict
 
 def get_rating_days(db: Session, user: UserToJwt):
-    result = (
-        db.query(func.avg(DailyRating.rating).label("average_rating"))
+    results = (
+        db.query(
+            func.date_format(DailyRating.date, "%M-%Y").label("month_year"),  
+            func.avg(DailyRating.rating).label("average_rating") 
+        )
         .filter(DailyRating.user_id == user.user_id)
-        .first()
+        .group_by(func.date_format(DailyRating.date, "%M-%Y"))
+        .all()
     )
     
-    average_rating = result[0] if result and result[0] is not None else None
+    if not results:
+        return {"message": "No ratings found"}
 
-    if average_rating is None:
-        raise {"message": "No ratings found"}
+    monthly_ratings = [
+        {
+            "month_year": row.month_year,
+            "average_rating": float(row.average_rating)
+        }
+        for row in results
+    ]
 
-    return {"average_rating": float(average_rating)}
+    return monthly_ratings
 
 def get_rating_days_by_week(db: Session, user: UserToJwt, week_stats: WeekStats):
     date = week_stats.date
