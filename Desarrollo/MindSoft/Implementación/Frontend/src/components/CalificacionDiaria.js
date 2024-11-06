@@ -8,7 +8,7 @@ import * as SecureStore from 'expo-secure-store';
 export default function CalificacionDiaria({ visible, onClose }) {
   const navigation = useNavigation();
   const [selectedFeeling, setSelectedFeeling] = useState('');
-  const [selectedEmoji, setSelectedEmoji] = useState(''); 
+  const [selectedEmojis, setSelectedEmojis] = useState([]); 
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const { submitDailyRating, loading, error } = useDailyRating();
 
@@ -45,7 +45,15 @@ export default function CalificacionDiaria({ visible, onClose }) {
   };
 
   const handleSelectAnimo = (emoji) => {
-    setSelectedEmoji(emoji); 
+    if (selectedEmojis.includes(emoji)) {
+      setSelectedEmojis(selectedEmojis.filter(item => item !== emoji)); 
+    } else {
+      if (selectedEmojis.length < 2) {
+        setSelectedEmojis([...selectedEmojis, emoji]);
+      } else {
+        Alert.alert('Solo puedes seleccionar hasta 2 emociones');
+      }
+    }
   };
 
 
@@ -64,6 +72,7 @@ export default function CalificacionDiaria({ visible, onClose }) {
     if (response && !response.error) {
       Alert.alert('Calificación enviada con éxito');
       setSelectedFeeling(''); 
+      setSelectedEmojis([]);
       onClose();
       navigation.navigate('SeguimientoObjetivo');
     } else {
@@ -99,11 +108,11 @@ export default function CalificacionDiaria({ visible, onClose }) {
           <Text style={styles.title}>¿Cómo te sientes?</Text>
           <View style={styles.emojiEstadoAnimo}>
             {emojisAnimo.map((item, index) => (
-              <View key={index} style={[styles.emojiContainer, selectedEmoji === item.emoji && styles.selectedEmojiContainer]}>
+              <View key={index} style={[styles.emojiContainer, selectedEmojis.includes(item.emoji) && styles.selectedEmojiContainer]}>
                 <TouchableOpacity key={index} onPress={() => handleSelectAnimo(item.emoji)}>
                 <Text style={styles.emoji}>{item.emoji}</Text>
                 </TouchableOpacity>
-                <Text style={[styles.emojiLabel, selectedEmoji === item.emoji && styles.selectedLabelText]}>{item.label}</Text>
+                <Text style={[styles.emojiLabel, selectedEmojis.includes(item.emoji) && styles.selectedLabelText]}>{item.label}</Text>
               </View>
             ))}
           </View>
@@ -111,13 +120,6 @@ export default function CalificacionDiaria({ visible, onClose }) {
           <TouchableOpacity style={styles.submitButton} onPress={handleSubirCalificacion}>
             <Text style={styles.submitText}>Enviar</Text>
           </TouchableOpacity>
-
-          {selectedFeeling !== '' && (
-            <Text style={styles.selectedText}>Calificación seleccionada: {selectedFeeling}</Text>
-          )}
-          {selectedEmoji !== '' && (
-            <Text style={styles.selectedText}>Emoción seleccionada: {selectedEmoji}</Text>
-          )}
         </View>
       </View>
     </Modal>
