@@ -15,6 +15,7 @@ import Notas from './src/screens/diario_notas';
 import AgregarNotas from './src/screens/diario_agregar';
 import Estadisticas from './src/screens/estadisticas';
 
+
 export default function App() {
 
   const Stack = createStackNavigator();
@@ -78,7 +79,7 @@ export default function App() {
           name="Estadisticas" 
           component={Estadisticas} 
           options={{ headerShown: false }}/>
-
+        
         </Stack.Navigator>
 
     );

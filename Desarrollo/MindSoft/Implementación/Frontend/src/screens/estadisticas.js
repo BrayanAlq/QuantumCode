@@ -1,29 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'; // Agregamos TouchableOpacity
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import RNSpeedometer from 'react-native-speedometer'; // Importa el componente de medidor de velocidad
 
 export default function Estadisticas() {
+    const logo = require("../../assets/clipart2905515.png");
     const [dailyRatings, setDailyRatings] = useState([]);
-    const [currentRating, setCurrentRating] = useState(0); // Estado para el valor del medidor
-    const [selectedFeeling, setSelectedFeeling] = useState(null); // Agregamos estado para el sentimiento seleccionado
+    const [currentRating, setCurrentRating] = useState(0);
+    const [estado, setEstado] = useState(new Animated.Value(0)); // Cambié esto para manejar el valor de la animación
 
     const emojisCalif = [
-        { emoji: '😖' }, // Agregamos una propiedad label
+        { emoji: '😖' },
         { emoji: '😊' },
     ];
 
-    const handleSelect = (emoji) => {
-        setSelectedFeeling(emoji); // Cambia el estado del sentimiento seleccionado
-    };
-
+    // Generar datos ficticios de calificaciones para los últimos 7 días
     useEffect(() => {
-        // Generar datos ficticios de calificaciones para los últimos 7 días
         const mockRatings = Array.from({ length: 7 }, () => Math.floor(Math.random() * 5) + 1);
         setDailyRatings(mockRatings);
         const average = mockRatings.reduce((a, b) => a + b, 0) / mockRatings.length;
         setCurrentRating(average); // Establece el valor del medidor como el promedio
-    }, []);
+
+        const prm = 2.26 + ((currentRating.toFixed(2)-1) * 0.62);
+        setEstado(new Animated.Value(prm)); // Actualiza el valor de la animación cuando el promedio cambia
+
+    }, [currentRating]); // El useEffect se ejecuta cuando el currentRating cambia
+
+    const animInterpolation = estado.interpolate({
+        inputRange: [-1, 1],
+        outputRange: ['-90deg', '90deg'], // Cambia los ángulos según el rango que desees
+    });
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -36,8 +41,17 @@ export default function Estadisticas() {
                 <Text style={styles.boxText}>Estadística de calificación del día</Text>
                 <Text style={styles.averageText}>Promedio semanal</Text>
                 
-                {/* Componente de medidor de velocidad */}
-                <RNSpeedometer value={currentRating} size={200} />
+                <Image source={logo} style={styles.userImage} />
+
+                {/* Indicador con rotación sobre su propio eje */}
+                <Animated.View 
+                    style={[
+                        styles.rotatingIcon, 
+                        { transform: [{ rotate: animInterpolation }] }
+                    ]}
+                >
+                    <Ionicons name="navigate-outline" size={60} color="#0B72D0" />
+                </Animated.View>
 
                 <View style={styles.boxContainer1}>
                     <Text style={styles.averageText1}>{currentRating.toFixed(1)}</Text>
@@ -45,7 +59,7 @@ export default function Estadisticas() {
 
                 <View style={styles.emojiRow}>
                     {emojisCalif.map((item, index) => (
-                        <TouchableOpacity key={index} onPress={() => handleSelect(item.emoji)} style={styles.emojiContainer}>
+                        <TouchableOpacity key={index} style={styles.emojiContainer}>
                             <Text style={styles.emoji1}>{item.emoji}</Text>
                         </TouchableOpacity>
                     ))}
@@ -74,27 +88,30 @@ const styles = StyleSheet.create({
         backgroundColor: '#ADC0D1',
         marginHorizontal: 10,
     },
+
+    rotatingIcon: {
+        position: "absolute",
+        top: 210,
+        left: 150,
+    },
     boxContainer: {
-        backgroundColor: 'white', // Color de fondo blanco
-        borderRadius: 10, // Bordes redondeados
-        padding: 20, // Espacio interno
-        alignItems: 'center', // Centra el contenido
-        marginTop: 20, // Espacio entre el título y el contenedor
-        shadowColor: '#000', // Color de sombra
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+        marginTop: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 2,
-        elevation: 2, // Elevación para Android
-        width: '90%', // Ancho del contenedor
-        alignSelf: 'center', // Centra el contenedor en la pantalla
+        elevation: 2,
+        width: '90%',
+        alignSelf: 'center',
     },
     boxText: {
         fontSize: 16,
         color: 'black',
-        textAlign: 'left', // Centra el texto dentro del contenedor
+        textAlign: 'left',
     },
     averageText: {
         fontSize: 18,
@@ -104,17 +121,16 @@ const styles = StyleSheet.create({
     averageText1: {
         fontSize: 18,
         color: 'white',
-        marginVertical: 10,
-       
+        marginVertical: 9,
     },
     boxContainer1: {
-        backgroundColor: '#0B72D0', // Color de fondo
-        borderRadius: 10, // Bordes redondeados
-        padding: 5, // Espacio interno
-        alignItems: 'center', // Centra el contenido
-        marginTop: 10, // Espacio entre el título y el contenedor
-        width: '25%', // Ancho del contenedor para que no se expanda
-        alignSelf: 'center', // Centra el contenedor
+        backgroundColor: '#0B72D0',
+        borderRadius: 10,
+        padding: 5,
+        alignItems: 'center',
+        marginTop: 10,
+        width: '25%',
+        alignSelf: 'center',
     },
     emojiRow: {
         flexDirection: 'row',
@@ -129,5 +145,12 @@ const styles = StyleSheet.create({
     },
     emoji1: {
         fontSize: 40,
+    },
+    userImage: {
+        width: 260,
+        height: 190,
+        marginBottom: 0,
+        marginLeft: 5,
+        marginTop: 15,
     },
 });
