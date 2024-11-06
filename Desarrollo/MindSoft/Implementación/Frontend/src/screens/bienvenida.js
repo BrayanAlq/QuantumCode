@@ -1,9 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import CalificacionDiaria from '../components/CalificacionDiaria';
+import { useCheckDailyRating } from '../hooks/useCheckDailyRating';
+import * as SecureStore from 'expo-secure-store'; 
 
-export default function PantallaBienvenida() {
+export default function PantallaBienvenida({ navigation }) {
   const [emojiPopupVisible, setEmojiPopupVisible] = useState(false);
+  const { checkMood, status, loading, error } = useCheckDailyRating();
+
+ 
+
+  useEffect(() => {
+    const checkRatingStatus = async () => {
+      const token = await SecureStore.getItemAsync('authToken'); 
+      if (token) {
+        await checkMood(token); 
+
+        if (status === 'forbidden') {
+          navigation.replace('NuevoObjetivo'); 
+        } else if (status === 'allowed') {
+          setEmojiPopupVisible(true); 
+        }
+      } else {
+        Alert.alert('Error', 'No se encontró el token de autenticación');
+      }
+    };
+
+    
+      checkRatingStatus();
+    
+  }, [navigation, checkMood, status]);
+
 
   return (
     <View style={styles.container}>
@@ -12,12 +39,7 @@ export default function PantallaBienvenida() {
       <Text style={styles.welcomeText}>Bienvenido a Mindsoft</Text>
       <Text style={styles.subText}>Déjanos saber cómo te encuentras el día de hoy!!</Text>
 
-      <TouchableOpacity
-        style={styles.openButton}
-        onPress={() => setEmojiPopupVisible(true)}
-      >
-        <Text style={styles.buttonText}>Seleccionar emociones</Text>
-      </TouchableOpacity>
+
 
       <CalificacionDiaria
         visible={emojiPopupVisible}
@@ -49,12 +71,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  openButton: {
+  /*openButton: {
     backgroundColor: '#0B72D2',
     marginTop: 50,
     padding: 10,
     borderRadius: 10,
-  },
+  },*/
   buttonText: {
     color: 'white',
     fontSize: 18,

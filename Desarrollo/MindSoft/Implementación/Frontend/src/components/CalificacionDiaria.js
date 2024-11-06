@@ -11,7 +11,7 @@ export default function CalificacionDiaria({ visible, onClose }) {
   const [selectedEmojis, setSelectedEmojis] = useState([]); 
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const { submitDailyRating, loading, error } = useDailyRating();
-
+  
   const emojisCalif = [
     { emoji: '😖', label: 'Muy mal' },
     { emoji: '😢', label: 'Mal' },
@@ -66,6 +66,9 @@ export default function CalificacionDiaria({ visible, onClose }) {
       Alert.alert('Por favor selecciona un emoji');
       return;
     }
+
+
+    
   
     const response = await submitDailyRating(rating, date, token);
   
@@ -74,7 +77,7 @@ export default function CalificacionDiaria({ visible, onClose }) {
       setSelectedFeeling(''); 
       setSelectedEmojis([]);
       onClose();
-      navigation.navigate('SeguimientoObjetivo');
+      navigation.navigate('NuevoObjetivo');
     } else {
       Alert.alert('Error', response.error || 'Algo salió mal');
     }
