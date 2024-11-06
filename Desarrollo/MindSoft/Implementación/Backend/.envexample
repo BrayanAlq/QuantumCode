@@ -3,3 +3,4 @@ DB_PASSWORD=
 DB_HOST=localhost
 DB_NAME=mindsoft
 SECRET_KEY=
+OPENAI_API_KEY=
