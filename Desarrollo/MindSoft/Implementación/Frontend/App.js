@@ -1,29 +1,27 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View } from "react-native";
 //import Login from './src/screens/LoginScreen'; // Pantalla de login que puedes crear
 
-import PantallaBienvenida from './src/screens/bienvenida';
-import login from './src/screens/login';
-import Confirmacion from './src/screens/Confirmacion';
-import NuevoObjetivo from './src/screens/nuevo_objetivo';
-import ModificarObjetivo from './src/screens/mod_objetivo';
-import SeguimientoObjetivo from './src/screens/seg_objetivos';
-import Notas from './src/screens/diario_notas';
-import AgregarNotas from './src/screens/diario_agregar';
-import Estadisticas from './src/screens/estadisticas';
-
+import PantallaBienvenida from "./src/screens/bienvenida";
+import login from "./src/screens/login";
+import Confirmacion from "./src/screens/Confirmacion";
+import NuevoObjetivo from "./src/screens/nuevo_objetivo";
+import ModificarObjetivo from "./src/screens/mod_objetivo";
+import SeguimientoObjetivo from "./src/screens/seg_objetivos";
+import Notas from "./src/screens/diario_notas";
+import AgregarNotas from "./src/screens/diario_agregar";
+import Estadisticas from "./src/screens/estadisticas";
+import Recomendaciones from "./src/screens/recomendaciones";
 
 export default function App() {
-
   const Stack = createStackNavigator();
 
   function MyStack() {
     return (
-      <Stack.Navigator initialRouteName='login'>
-
+      <Stack.Navigator initialRouteName="Recomendaciones">
         <Stack.Screen
           name="login"
           component={login}
@@ -38,7 +36,7 @@ export default function App() {
         <Stack.Screen
           name="Confirmacion"
           component={Confirmacion}
-          options={{ headerShown: false,}}
+          options={{ headerShown: false }}
         />
 
         <Stack.Screen
@@ -47,41 +45,48 @@ export default function App() {
           options={{ headerShown: false }}
         />
 
-        <Stack.Screen 
-          name="SeguimientoObjetivo" 
-          component={SeguimientoObjetivo} 
-          options={{ headerShown: false }}
-        />
-
-        <Stack.Screen 
-          name="NuevoObjetivo" 
-          component={NuevoObjetivo} 
-          options={{ headerShown: false }}
-        />
-
-        <Stack.Screen 
-          name="ModificarObjetivo" 
-          component={ModificarObjetivo} 
+        <Stack.Screen
+          name="SeguimientoObjetivo"
+          component={SeguimientoObjetivo}
           options={{ headerShown: false }}
         />
 
         <Stack.Screen
-          name="DiarioNotas" 
-          component={Notas} 
-          options={{ headerShown: false }}/>
+          name="NuevoObjetivo"
+          component={NuevoObjetivo}
+          options={{ headerShown: false }}
+        />
 
         <Stack.Screen
-          name="AgregarNotas" 
-          component={AgregarNotas} 
-          options={{ headerShown: false }}/>
+          name="ModificarObjetivo"
+          component={ModificarObjetivo}
+          options={{ headerShown: false }}
+        />
 
         <Stack.Screen
-          name="Estadisticas" 
-          component={Estadisticas} 
-          options={{ headerShown: false }}/>
-        
-        </Stack.Navigator>
+          name="DiarioNotas"
+          component={Notas}
+          options={{ headerShown: false }}
+        />
 
+        <Stack.Screen
+          name="AgregarNotas"
+          component={AgregarNotas}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Estadisticas"
+          component={Estadisticas}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Recomendaciones"
+          component={Recomendaciones}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
     );
   }
 
