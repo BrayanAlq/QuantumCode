@@ -1,9 +1,9 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-//import Login from './src/screens/LoginScreen'; // Pantalla de login que puedes crear
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import CustomDrawerContent from "./src/components/barraMenu";
+
 
 import PantallaBienvenida from "./src/screens/bienvenida";
 import login from "./src/screens/login";
@@ -16,8 +16,10 @@ import AgregarNotas from "./src/screens/diario_agregar";
 import Estadisticas from "./src/screens/estadisticas";
 import Recomendaciones from "./src/screens/recomendaciones";
 
-export default function App() {
+
   const Stack = createStackNavigator();
+  const Drawer = createDrawerNavigator();
+
 
   function MyStack() {
     return (
@@ -27,8 +29,8 @@ export default function App() {
           component={login}
           options={{
             title: "",
-            headerTinteColor: "white",
-            headerTitleAling: "center",
+            headerTintColor: "white",
+            headerTitleAlign: "center",
             headerStyle: { backgroundColor: "#0B72D2" },
           }}
         />
@@ -46,11 +48,25 @@ export default function App() {
         />
 
         <Stack.Screen
+          name="DiarioNotas"
+          component={Notas}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="SeguimientoObjetivo"
           component={SeguimientoObjetivo}
           options={{ headerShown: false }}
         />
-
+        <Stack.Screen
+          name="Estadisticas"
+          component={Estadisticas}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Recomendaciones"
+          component={Recomendaciones}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="NuevoObjetivo"
           component={NuevoObjetivo}
@@ -63,11 +79,7 @@ export default function App() {
           options={{ headerShown: false }}
         />
 
-        <Stack.Screen
-          name="DiarioNotas"
-          component={Notas}
-          options={{ headerShown: false }}
-        />
+        
 
         <Stack.Screen
           name="AgregarNotas"
@@ -75,24 +87,28 @@ export default function App() {
           options={{ headerShown: false }}
         />
 
-        <Stack.Screen
-          name="Estadisticas"
-          component={Estadisticas}
-          options={{ headerShown: false }}
-        />
+        
 
-        <Stack.Screen
-          name="Recomendaciones"
-          component={Recomendaciones}
-          options={{ headerShown: false }}
-        />
+        
+
+        
       </Stack.Navigator>
     );
   }
 
-  return (
-    <NavigationContainer>
-      <MyStack />
-    </NavigationContainer>
-  );
-}
+  export default function App() {
+    return (
+      <NavigationContainer>
+        <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} />}>
+          <Drawer.Screen name="DiarioNotas" component={Notas} options={{ headerShown: false }}/>
+          <Drawer.Screen name="SeguimientoObjetivo" component={SeguimientoObjetivo} options={{ headerShown: false }}/>
+          <Drawer.Screen name="Estadisticas" component={Estadisticas} options={{ headerShown: false }}/>
+          <Drawer.Screen name="Recomendaciones" component={Recomendaciones} options={{ headerShown: false }} />
+          <Drawer.Screen name="NuevoObjetivo" component={NuevoObjetivo} options={{ headerShown: false }} />
+          <Drawer.Screen name="ModificarObjetivo" component={ModificarObjetivo} options={{ headerShown: false }} />
+          <Drawer.Screen name="AgregarNotas" component={AgregarNotas} options={{ headerShown: false }} />
+          <Drawer.Screen name="Home" component={MyStack} options={{ headerShown: false }} />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    );
+  }

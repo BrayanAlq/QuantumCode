@@ -58,10 +58,17 @@ export default function Notas() {
         ));
     };
 
+    const abrirMenu = () => {
+        navigation.openDrawer(); 
+    };
+
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
+            <View style={styles.header} >
+            <TouchableOpacity onPress={abrirMenu}>
                 <Ionicons name="menu" size={40} color="black" paddingTop={5} />
+            </TouchableOpacity>
+                
                 <View style={styles.separator} />
             </View>
 
