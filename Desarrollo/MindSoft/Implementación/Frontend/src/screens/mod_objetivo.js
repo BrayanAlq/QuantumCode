@@ -32,7 +32,6 @@ export default function ModificarObjetivo({ navigation,route }) {
             await updateGoal(updatedData);
             
             Alert.alert('Éxito', 'Objetivo modificado correctamente');
-            navigation.goBack();
         } catch (error) {
             Alert.alert('Error', 'No se pudo modificar el objetivo: ' + error.message);
         }
