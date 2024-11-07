@@ -36,7 +36,7 @@ export default function ListaObjetivos() {
       fetchGoals(); // Llama a fetchGoals si hay un parámetro de refresco
     }
   }, [route.params?.refresh]);
-
+  console.log(route.params?.refresh);
   console.log(goals);
 
   return (
