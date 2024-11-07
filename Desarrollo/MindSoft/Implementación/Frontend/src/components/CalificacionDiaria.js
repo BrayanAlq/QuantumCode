@@ -98,7 +98,7 @@ export default function CalificacionDiaria({ visible, onClose }) {
       if (response && !response.error) {
         Alert.alert('Su calificación diaria se ah registrado con éxito');
         setSelectedEmojis([]); 
-        navigation.navigate('NuevoObjetivo');
+        navigation.navigate('Recomendaciones');
       } else {
         Alert.alert('Error', response.error || 'Algo salió mal');
       }
