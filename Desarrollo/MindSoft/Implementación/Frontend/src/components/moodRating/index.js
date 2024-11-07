@@ -1,2 +1,1 @@
-export * from './MoodRatingWeek'
-export * from './MoodRatingTotal'
+export * from './ContainerMoodRating'
