@@ -1,36 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { checkMoodRating } from '../services/checkDailyRating';
 
-export const useCheckDailyRating = () => {
-  const [loading, setLoading] = useState(false);
+const useMoodRating = () => {
+  const [status, setStatus] = useState(null);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [status, setStatus] = useState(null);  // Inicializa el estado de status
 
-  const checkMood = async (token) => {
-    if (status) return;  // Si ya hay un status, no hace la solicitud
-
+  const fetchMoodRatingStatus = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await checkMoodRating(token);
-
-      if (response.error) {
-        throw new Error(response.error);
-      }
-
-      setStatus(response.status);  // Actualiza el estado de status
-    } catch (error) {
-      setError(error.message);
+      const result = await checkMoodRating();
+      setStatus(result.allowed);
+      setMessage(result.message);
+    } catch (err) {
+      console.error('Error in useMoodRating:', err);
+      setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  return {
-    checkMood,
-    loading,
-    error,
-    status,
-  };
+  useEffect(() => {
+    fetchMoodRatingStatus();
+  }, []);
+
+  return { status, message, loading, error, refresh: fetchMoodRatingStatus };
 };
+
+export default useMoodRating;

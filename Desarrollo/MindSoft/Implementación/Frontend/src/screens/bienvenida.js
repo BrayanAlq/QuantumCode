@@ -1,35 +1,40 @@
 import React, { useState,useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert,ActivityIndicator } from 'react-native';
 import CalificacionDiaria from '../components/CalificacionDiaria';
-import { useCheckDailyRating } from '../hooks/useCheckDailyRating';
-import * as SecureStore from 'expo-secure-store'; 
+import useMoodRating from '../hooks/useCheckDailyRating';
+
 
 export default function PantallaBienvenida({ navigation }) {
   const [emojiPopupVisible, setEmojiPopupVisible] = useState(false);
-  const { checkMood, status, loading, error } = useCheckDailyRating();
+  const { status, loading, error } = useMoodRating();
+  const [isLoading, setIsLoading] = useState(true);
+  
 
- 
 
   useEffect(() => {
-    const checkRatingStatus = async () => {
-      const token = await SecureStore.getItemAsync('authToken'); 
-      if (token) {
-        await checkMood(token); 
-
-        if (status === 'forbidden') {
-          navigation.replace('NuevoObjetivo'); 
-        } else if (status === 'allowed') {
-          setEmojiPopupVisible(true); 
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      if (!loading && status !== null) {
+        if (!status) {
+          navigation.replace('NuevoObjetivo');
+        } else {
+          setEmojiPopupVisible(true);
         }
-      } else {
-        Alert.alert('Error', 'No se encontró el token de autenticación');
       }
-    };
+    }, 6000); 
 
-    
-      checkRatingStatus();
-    
-  }, [navigation, checkMood, status]);
+    return () => clearTimeout(timer);
+  }, [loading, status, navigation]);
+
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Ocurrió un error: {error}</Text>
+      </View>
+    );
+  }
+
 
 
   return (
@@ -39,12 +44,21 @@ export default function PantallaBienvenida({ navigation }) {
       <Text style={styles.welcomeText}>Bienvenido a Mindsoft</Text>
       <Text style={styles.subText}>Déjanos saber cómo te encuentras el día de hoy!!</Text>
 
+      {isLoading ? (
+        <>
+          
+          <ActivityIndicator size="large" color="#0B72D2" />
+          <Text style={styles.loadingText}>Cargando...</Text> 
+        </>
+      ) :(
 
-
-      <CalificacionDiaria
-        visible={emojiPopupVisible}
-        onClose={() => setEmojiPopupVisible(false)}
-      />
+      emojiPopupVisible && (
+        <CalificacionDiaria
+          visible={emojiPopupVisible}
+          onClose={() => setEmojiPopupVisible(false)}
+        />
+      )
+      )}
     </View>
   );
 }
@@ -71,15 +85,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  /*openButton: {
-    backgroundColor: '#0B72D2',
-    marginTop: 50,
-    padding: 10,
-    borderRadius: 10,
-  },*/
   buttonText: {
     color: 'white',
     fontSize: 18,
+  },
+  loadingText: {
+    fontSize: 15,
+    color: '#black',
+    fontWeight: 'semibold',
+    marginTop: 20, 
+    textAlign: 'center',
   },
   icon1: {
     width: 150,
