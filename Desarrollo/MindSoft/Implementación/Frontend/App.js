@@ -11,6 +11,10 @@ import Confirmacion from './src/screens/Confirmacion';
 import NuevoObjetivo from './src/screens/nuevo_objetivo';
 import ModificarObjetivo from './src/screens/mod_objetivo';
 import SeguimientoObjetivo from './src/screens/seg_objetivos';
+import Notas from './src/screens/diario_notas';
+import AgregarNotas from './src/screens/diario_agregar';
+import Estadisticas from './src/screens/estadisticas';
+
 
 export default function App() {
 
@@ -61,7 +65,23 @@ export default function App() {
           options={{ headerShown: false }}
         />
 
-      </Stack.Navigator>
+        <Stack.Screen
+          name="DiarioNotas" 
+          component={Notas} 
+          options={{ headerShown: false }}/>
+
+        <Stack.Screen
+          name="AgregarNotas" 
+          component={AgregarNotas} 
+          options={{ headerShown: false }}/>
+
+        <Stack.Screen
+          name="Estadisticas" 
+          component={Estadisticas} 
+          options={{ headerShown: false }}/>
+        
+        </Stack.Navigator>
+
     );
   }
 
