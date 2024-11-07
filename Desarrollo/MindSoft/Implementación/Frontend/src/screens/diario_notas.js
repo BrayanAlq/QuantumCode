@@ -42,7 +42,7 @@ export default function Notas() {
 
     // Función para renderizar cada nota
     const renderItem = ({ item }) => (
-        <View style={styles.nota}>
+        <View style={styles.nota} key={item.journal_id}>
             <Text style={styles.textoNota}>{item.description}</Text>
             <Text style={styles.fechaNota}>{item.date}</Text>
         </View>

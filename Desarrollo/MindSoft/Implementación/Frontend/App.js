@@ -97,9 +97,15 @@ import Recomendaciones from "./src/screens/recomendaciones";
   }
 
   export default function App() {
+
     return (
       <NavigationContainer>
-        <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} />}>
+        <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} /> } screenOptions={{
+          drawerStyle: {
+            width: 310, 
+          },
+        }} >
+          <Drawer.Screen name="Home" component={MyStack} options={{ headerShown: false }} />
           <Drawer.Screen name="DiarioNotas" component={Notas} options={{ headerShown: false }}/>
           <Drawer.Screen name="SeguimientoObjetivo" component={SeguimientoObjetivo} options={{ headerShown: false }}/>
           <Drawer.Screen name="Estadisticas" component={Estadisticas} options={{ headerShown: false }}/>
@@ -107,7 +113,7 @@ import Recomendaciones from "./src/screens/recomendaciones";
           <Drawer.Screen name="NuevoObjetivo" component={NuevoObjetivo} options={{ headerShown: false }} />
           <Drawer.Screen name="ModificarObjetivo" component={ModificarObjetivo} options={{ headerShown: false }} />
           <Drawer.Screen name="AgregarNotas" component={AgregarNotas} options={{ headerShown: false }} />
-          <Drawer.Screen name="Home" component={MyStack} options={{ headerShown: false }} />
+          
         </Drawer.Navigator>
       </NavigationContainer>
     );

@@ -40,14 +40,18 @@ export default function ModificarObjetivo({ navigation,route }) {
     
 
     const regresar = () => {
-        navigation.goBack();
+        navigation.navigate('SeguimientoObjetivo');
+    };
+
+    const abrirMenu = () => {
+        navigation.openDrawer(); 
     };
 
     return (
         <View style={styles.container}>
-            {/* Barra de navegación superior */}
+            
             <View style={styles.header}>
-                <TouchableOpacity onPress={regresar}>
+                <TouchableOpacity onPress={abrirMenu}> 
                     <Ionicons name="menu" size={40} color="black" />
                 </TouchableOpacity>
                 <View style={styles.separator} />
