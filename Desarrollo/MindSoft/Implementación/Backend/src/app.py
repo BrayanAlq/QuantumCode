@@ -12,6 +12,8 @@ from .routes.stat import stat_router
 from .routes.mood_rating import mood_rating_router
 from .routes.mood import mood_router
 from .routes.journal import journal_router
+from .routes.recomendations import recomendations_router
+from .routes.user import user_router
 
 app = FastAPI()
 
@@ -22,6 +24,8 @@ app.include_router(stat_router)
 app.include_router(mood_router)
 app.include_router(mood_rating_router)
 app.include_router(journal_router)
+app.include_router(recomendations_router)
+app.include_router(user_router)
 
 @app.on_event("startup")
 def startup():

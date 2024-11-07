@@ -1,14 +1,17 @@
 import { API_URL } from '@env';
 
-export const createDailyRating = async (rating, date, token) => {
+export const createMoodRating = async (moodRating, token) => {
   try {
-    const response = await fetch(`${API_URL}/user-daily_rating`, {
+    const response = await fetch(`${API_URL}/mood-rating`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({ rating, date }),
+      body: JSON.stringify({
+        date: moodRating.date, 
+        mood_detail: moodRating.mood_detail, 
+      }),
     });
 
     if (!response.ok) {
@@ -16,8 +19,8 @@ export const createDailyRating = async (rating, date, token) => {
       throw new Error(errorJson.detail);
     }
 
-    return await response.json();
+    return await response.json(); 
   } catch (error) {
-    return { error: error.message };
+    return { error: error.message }; 
   }
 };

@@ -32,7 +32,6 @@ export default function ModificarObjetivo({ navigation,route }) {
             await updateGoal(updatedData);
             
             Alert.alert('Éxito', 'Objetivo modificado correctamente');
-            navigation.goBack();
         } catch (error) {
             Alert.alert('Error', 'No se pudo modificar el objetivo: ' + error.message);
         }
@@ -40,14 +39,18 @@ export default function ModificarObjetivo({ navigation,route }) {
     
 
     const regresar = () => {
-        navigation.goBack();
+        navigation.navigate('SeguimientoObjetivo');
+    };
+
+    const abrirMenu = () => {
+        navigation.openDrawer(); 
     };
 
     return (
         <View style={styles.container}>
-            {/* Barra de navegación superior */}
+            
             <View style={styles.header}>
-                <TouchableOpacity onPress={regresar}>
+                <TouchableOpacity onPress={abrirMenu}> 
                     <Ionicons name="menu" size={40} color="black" />
                 </TouchableOpacity>
                 <View style={styles.separator} />

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function Estadisticas() {
+export default function Estadisticas({ navigation }) {
     const logo = require("../../assets/clipart2905515.png");
     const [dailyRatings, setDailyRatings] = useState([]);
     const [currentRating, setCurrentRating] = useState(0);
@@ -30,10 +30,16 @@ export default function Estadisticas() {
         outputRange: ['-90deg', '90deg'], // Cambia los ángulos según el rango que desees
     });
 
+    const abrirMenu = () => {
+        navigation.openDrawer(); 
+    };
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.header}>
+            <TouchableOpacity onPress={abrirMenu}>
                 <Ionicons name="menu" size={40} color="black" paddingTop={5} />
+            </TouchableOpacity>
                 <View style={styles.separator} />
             </View>
 

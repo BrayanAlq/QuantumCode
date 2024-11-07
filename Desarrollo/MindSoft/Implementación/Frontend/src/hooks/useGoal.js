@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { API_URL } from '../services/constants';
+import { API_URL } from '@env';
 
 export const useGoals = () => {
   const [goals, setGoals] = useState([]);

@@ -42,7 +42,7 @@ export default function Notas() {
 
     // Función para renderizar cada nota
     const renderItem = ({ item }) => (
-        <View style={styles.nota}>
+        <View style={styles.nota} key={item.journal_id}>
             <Text style={styles.textoNota}>{item.description}</Text>
             <Text style={styles.fechaNota}>{item.date}</Text>
         </View>
@@ -58,10 +58,17 @@ export default function Notas() {
         ));
     };
 
+    const abrirMenu = () => {
+        navigation.openDrawer(); 
+    };
+
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
+            <View style={styles.header} >
+            <TouchableOpacity onPress={abrirMenu}>
                 <Ionicons name="menu" size={40} color="black" paddingTop={5} />
+            </TouchableOpacity>
+                
                 <View style={styles.separator} />
             </View>
 

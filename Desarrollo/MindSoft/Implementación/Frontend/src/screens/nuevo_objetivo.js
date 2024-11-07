@@ -39,16 +39,19 @@ export default function NuevoObjetivo({ navigation }) {
         }
     };
 
+    const abrirMenu = () => {
+        navigation.openDrawer(); 
+    };
     const regresar = () => {
-        navigation.goBack();
+        navigation.navigate('SeguimientoObjetivo');
     };
 
     return (
         <View style={styles.container}>
             {/* Barra de navegación superior */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={regresar}>
-                    <Ionicons name="menu" size={40} color="black" />
+            <TouchableOpacity onPress={abrirMenu}> 
+                <Ionicons name="menu" size={40} color="black" />
                 </TouchableOpacity>
                 <View style={styles.separator} />
             </View>

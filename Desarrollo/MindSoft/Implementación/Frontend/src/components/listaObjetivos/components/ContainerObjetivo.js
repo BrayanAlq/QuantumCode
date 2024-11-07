@@ -1,40 +1,42 @@
-import React from 'react';
+import React from "react";
 import { Text, View, TouchableOpacity, Alert } from "react-native";
 import { CalendarIcon, EditIcon, TrashIcon, CheckIcon } from "../../../icons";
 import { useGoals } from "../../../hooks/useGoal";
 
-export function ContainerObjetivo({ item, navigation }) {
+export function ContainerObjetivo({ item, navigation, onDelete }) {
   const { deleteGoal } = useGoals();
 
   const handleEdit = () => {
-    navigation.navigate('ModificarObjetivo', {
+    navigation.navigate("ModificarObjetivo", {
       goalId: item.goal_id,
       title: item.titulo,
       date: item.fecha,
-      time: item.plazo});
+      time: item.plazo,
+    });
   };
 
   const handleDelete = () => {
     Alert.alert(
-      'Eliminar Objetivo',
-      '¿Estás seguro de que deseas eliminar este objetivo?',
+      "Eliminar Objetivo",
+      "¿Estás seguro de que deseas eliminar este objetivo?",
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: "Cancelar", style: "cancel" },
         {
-          text: 'Eliminar',
+          text: "Eliminar",
           onPress: async () => {
             try {
               await deleteGoal(item.goal_id); // Llama a la función deleteGoal
-              Alert.alert('Éxito', 'Objetivo eliminado correctamente');
+              onDelete(); // Llama a la función onDelete para actualizar la lista
+              Alert.alert("Éxito", "Objetivo eliminado correctamente");
             } catch (error) {
-              Alert.alert('Error', error.message);
+              Alert.alert("Error", error.message);
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
-  
+
   return (
     <View className="rounded-xl justify-between p-4 bg-white w-full h-36 mb-4">
       <View className="flex-row gap-2">
@@ -54,5 +56,5 @@ export function ContainerObjetivo({ item, navigation }) {
         </View>
       </View>
     </View>
-  )
+  );
 }

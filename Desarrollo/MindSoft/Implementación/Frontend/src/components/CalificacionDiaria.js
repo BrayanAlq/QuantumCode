@@ -3,15 +3,17 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useDailyRating } from '../hooks/useDailyRating';
+import { useMoodRating } from '../hooks/useMoodRating';
 import * as SecureStore from 'expo-secure-store';
 
 export default function CalificacionDiaria({ visible, onClose }) {
   const navigation = useNavigation();
   const [selectedFeeling, setSelectedFeeling] = useState('');
-  const [selectedEmoji, setSelectedEmoji] = useState(''); 
+  const [selectedEmojis, setSelectedEmojis] = useState([]); 
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const { submitDailyRating, loading, error } = useDailyRating();
-
+  const { submitDailyRating, loading: dailyLoading, error: dailyError  } = useDailyRating();
+  const { submitMoodRating, loading: moodLoading, error: moodError } = useMoodRating();
+  
   const emojisCalif = [
     { emoji: '😖', label: 'Muy mal' },
     { emoji: '😢', label: 'Mal' },
@@ -21,15 +23,15 @@ export default function CalificacionDiaria({ visible, onClose }) {
   ];
 
   const emojisAnimo = [
-    { emoji: '😔', label: 'Deprimido' },
-    { emoji: '😟', label: 'Inseguro' },
-    { emoji: '😬', label: 'Ansioso' },
-    { emoji: '😠', label: 'Enojado' },
-    { emoji: '😵‍💫', label: 'Exhausto' },
-    { emoji: '🤩', label: 'Eufórico' },
-    { emoji: '😌', label: 'Aliviado' },
-    { emoji: '😲', label: 'Sorprendido' },
-    { emoji: '😁', label: 'Feliz' },
+    { emoji: '😔', label: 'Deprimido', id: 1 },
+    { emoji: '😟', label: 'Inseguro', id: 2 },
+    { emoji: '😬', label: 'Ansioso', id: 3 },
+    { emoji: '😠', label: 'Enojado' , id: 4},
+    { emoji: '😵‍💫', label: 'Exhausto' , id: 5},
+    { emoji: '🤩', label: 'Eufórico', id: 6 },
+    { emoji: '😌', label: 'Aliviado', id: 7 },
+    { emoji: '😲', label: 'Sorprendido', id: 8 },
+    { emoji: '😁', label: 'Feliz', id: 9 },
   ];
 
   const emojiToRating = {
@@ -45,7 +47,15 @@ export default function CalificacionDiaria({ visible, onClose }) {
   };
 
   const handleSelectAnimo = (emoji) => {
-    setSelectedEmoji(emoji); 
+    if (selectedEmojis.includes(emoji)) {
+      setSelectedEmojis(selectedEmojis.filter(item => item !== emoji)); 
+    } else {
+      if (selectedEmojis.length < 2) {
+        setSelectedEmojis([...selectedEmojis, emoji]);
+      } else {
+        Alert.alert('Solo puedes seleccionar hasta 2 emociones');
+      }
+    }
   };
 
 
@@ -55,20 +65,63 @@ export default function CalificacionDiaria({ visible, onClose }) {
     const rating = emojiToRating[selectedFeeling];
   
     if (!rating) {
-      Alert.alert('Por favor selecciona un emoji');
+      Alert.alert('Por favor selecciona un emoji de calificación');
       return;
     }
-  
+
     const response = await submitDailyRating(rating, date, token);
   
     if (response && !response.error) {
-      Alert.alert('Calificación enviada con éxito');
       setSelectedFeeling(''); 
-      onClose();
-      navigation.navigate('SeguimientoObjetivo');
     } else {
       Alert.alert('Error', response.error || 'Algo salió mal');
     }
+  };
+
+
+  const handleEnviarEmociones = async () => {
+    const token = await SecureStore.getItemAsync('authToken');
+
+    if (selectedEmojis.length === 0) {
+      Alert.alert('Por favor selecciona al menos una emoción');
+      return;
+    }
+
+    try {
+      const moodRating = {
+        date: new Date().toISOString().split('T')[0], 
+        mood_detail: selectedEmojis.map(emoji => ({ mood_id: emojisAnimo.find(item => item.emoji === emoji).id })) 
+      };
+
+      const response = await submitMoodRating(moodRating, token); 
+
+      if (response && !response.error) {
+        Alert.alert('Su calificación diaria se ah registrado con éxito');
+        setSelectedEmojis([]); 
+        navigation.navigate('Recomendaciones');
+      } else {
+        Alert.alert('Error', response.error || 'Algo salió mal');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Hubo un problema al enviar las emociones');
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedFeeling) {
+      Alert.alert('Por favor complete el cuestionario de calificación ');
+      return;
+    }
+  
+    if (selectedEmojis.length === 0) {
+      Alert.alert('Por favor selecciona al menos una emoción');
+      return;
+    }
+
+
+    await handleSubirCalificacion();
+    await handleEnviarEmociones();
+    onClose();
   };
 
   return (
@@ -99,25 +152,18 @@ export default function CalificacionDiaria({ visible, onClose }) {
           <Text style={styles.title}>¿Cómo te sientes?</Text>
           <View style={styles.emojiEstadoAnimo}>
             {emojisAnimo.map((item, index) => (
-              <View key={index} style={[styles.emojiContainer, selectedEmoji === item.emoji && styles.selectedEmojiContainer]}>
+              <View key={index} style={[styles.emojiContainer, selectedEmojis.includes(item.emoji) && styles.selectedEmojiContainer]}>
                 <TouchableOpacity key={index} onPress={() => handleSelectAnimo(item.emoji)}>
                 <Text style={styles.emoji}>{item.emoji}</Text>
                 </TouchableOpacity>
-                <Text style={[styles.emojiLabel, selectedEmoji === item.emoji && styles.selectedLabelText]}>{item.label}</Text>
+                <Text style={[styles.emojiLabel, selectedEmojis.includes(item.emoji) && styles.selectedLabelText]}>{item.label}</Text>
               </View>
             ))}
           </View>
           </View>
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubirCalificacion}>
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
             <Text style={styles.submitText}>Enviar</Text>
           </TouchableOpacity>
-
-          {selectedFeeling !== '' && (
-            <Text style={styles.selectedText}>Calificación seleccionada: {selectedFeeling}</Text>
-          )}
-          {selectedEmoji !== '' && (
-            <Text style={styles.selectedText}>Emoción seleccionada: {selectedEmoji}</Text>
-          )}
         </View>
       </View>
     </Modal>
