@@ -13,13 +13,17 @@ export const useGoals = () => {
       try {
         const storedToken = await SecureStore.getItemAsync("authToken");
         setToken(storedToken);
+        // Llamamos a fetchGoals solo cuando el token se haya recuperado
+        if (storedToken) {
+          fetchGoals(); // Llama a fetchGoals con el token recuperado
+        }
       } catch (err) {
         setError("Error retrieving token");
       }
     };
 
     fetchToken();
-  }, []);
+  }, []); // Este useEffect se ejecuta solo una vez al montar el componente
 
   const fetchGoals = async () => {
     if (!token) return; // No hacer nada si no hay token
@@ -50,7 +54,7 @@ export const useGoals = () => {
 
   useEffect(() => {
     fetchGoals(); // Llama a fetchGoals cuando se establece el token
-  }, []);
+  }, [token]);
 
   const createGoal = async (goalData) => {
     try {
