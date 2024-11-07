@@ -1,5 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
-import { API_URL } from './constants';
+import { API_URL } from '@env';
 
 export const checkMoodRating = async () => {
   try {

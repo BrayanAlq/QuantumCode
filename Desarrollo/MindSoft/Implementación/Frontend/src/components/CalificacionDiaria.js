@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useDailyRating } from '../hooks/useDailyRating';
+import { useMoodRating } from '../hooks/useMoodRating';
 import * as SecureStore from 'expo-secure-store';
 
 export default function CalificacionDiaria({ visible, onClose }) {
@@ -10,7 +11,8 @@ export default function CalificacionDiaria({ visible, onClose }) {
   const [selectedFeeling, setSelectedFeeling] = useState('');
   const [selectedEmojis, setSelectedEmojis] = useState([]); 
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const { submitDailyRating, loading, error } = useDailyRating();
+  const { submitDailyRating, loading: dailyLoading, error: dailyError  } = useDailyRating();
+  const { submitMoodRating, loading: moodLoading, error: moodError } = useMoodRating();
   
   const emojisCalif = [
     { emoji: '😖', label: 'Muy mal' },
@@ -21,15 +23,15 @@ export default function CalificacionDiaria({ visible, onClose }) {
   ];
 
   const emojisAnimo = [
-    { emoji: '😔', label: 'Deprimido' },
-    { emoji: '😟', label: 'Inseguro' },
-    { emoji: '😬', label: 'Ansioso' },
-    { emoji: '😠', label: 'Enojado' },
-    { emoji: '😵‍💫', label: 'Exhausto' },
-    { emoji: '🤩', label: 'Eufórico' },
-    { emoji: '😌', label: 'Aliviado' },
-    { emoji: '😲', label: 'Sorprendido' },
-    { emoji: '😁', label: 'Feliz' },
+    { emoji: '😔', label: 'Deprimido', id: 1 },
+    { emoji: '😟', label: 'Inseguro', id: 2 },
+    { emoji: '😬', label: 'Ansioso', id: 3 },
+    { emoji: '😠', label: 'Enojado' , id: 4},
+    { emoji: '😵‍💫', label: 'Exhausto' , id: 5},
+    { emoji: '🤩', label: 'Eufórico', id: 6 },
+    { emoji: '😌', label: 'Aliviado', id: 7 },
+    { emoji: '😲', label: 'Sorprendido', id: 8 },
+    { emoji: '😁', label: 'Feliz', id: 9 },
   ];
 
   const emojiToRating = {
@@ -63,24 +65,63 @@ export default function CalificacionDiaria({ visible, onClose }) {
     const rating = emojiToRating[selectedFeeling];
   
     if (!rating) {
-      Alert.alert('Por favor selecciona un emoji');
+      Alert.alert('Por favor selecciona un emoji de calificación');
+      return;
+    }
+
+    const response = await submitDailyRating(rating, date, token);
+  
+    if (response && !response.error) {
+      setSelectedFeeling(''); 
+    } else {
+      Alert.alert('Error', response.error || 'Algo salió mal');
+    }
+  };
+
+
+  const handleEnviarEmociones = async () => {
+    const token = await SecureStore.getItemAsync('authToken');
+
+    if (selectedEmojis.length === 0) {
+      Alert.alert('Por favor selecciona al menos una emoción');
+      return;
+    }
+
+    try {
+      const moodRating = {
+        date: new Date().toISOString().split('T')[0], 
+        mood_detail: selectedEmojis.map(emoji => ({ mood_id: emojisAnimo.find(item => item.emoji === emoji).id })) 
+      };
+
+      const response = await submitMoodRating(moodRating, token); 
+
+      if (response && !response.error) {
+        Alert.alert('Su calificación diaria se ah registrado con éxito');
+        setSelectedEmojis([]); 
+        navigation.navigate('NuevoObjetivo');
+      } else {
+        Alert.alert('Error', response.error || 'Algo salió mal');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Hubo un problema al enviar las emociones');
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedFeeling) {
+      Alert.alert('Por favor complete el cuestionario de calificación ');
+      return;
+    }
+  
+    if (selectedEmojis.length === 0) {
+      Alert.alert('Por favor selecciona al menos una emoción');
       return;
     }
 
 
-    
-  
-    const response = await submitDailyRating(rating, date, token);
-  
-    if (response && !response.error) {
-      Alert.alert('Calificación enviada con éxito');
-      setSelectedFeeling(''); 
-      setSelectedEmojis([]);
-      onClose();
-      navigation.navigate('NuevoObjetivo');
-    } else {
-      Alert.alert('Error', response.error || 'Algo salió mal');
-    }
+    await handleSubirCalificacion();
+    await handleEnviarEmociones();
+    onClose();
   };
 
   return (
@@ -120,7 +161,7 @@ export default function CalificacionDiaria({ visible, onClose }) {
             ))}
           </View>
           </View>
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubirCalificacion}>
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
             <Text style={styles.submitText}>Enviar</Text>
           </TouchableOpacity>
         </View>
