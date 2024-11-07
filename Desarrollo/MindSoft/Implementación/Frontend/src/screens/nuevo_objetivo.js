@@ -40,7 +40,7 @@ export default function NuevoObjetivo({ navigation }) {
     };
 
     const regresar = () => {
-        navigation.goBack();
+        navigation.navigate('SeguimientoObjetivo');
     };
 
     return (
