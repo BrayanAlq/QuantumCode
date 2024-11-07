@@ -37,14 +37,15 @@ def initalize_db_moods():
     if count == 0:
 
       moods = [
-        Mood(mood="🚀"),
-        Mood(mood="😎"),
-        Mood(mood="🤔"),
-        Mood(mood="😐"),
-        Mood(mood="🙁"),
-        Mood(mood="😡"),
-        Mood(mood="😢"),
-        Mood(mood="😞")
+        Mood(mood="Deprimido"),
+        Mood(mood="Inseguro"),
+        Mood(mood="Ansioso"),
+        Mood(mood="Enojado"),
+        Mood(mood="Exhausto"),
+        Mood(mood="Eufórico"),
+        Mood(mood="Aliviado"),
+        Mood(mood="Sorprendido"),
+        Mood(mood="Feliz")
       ]
 
       for mood in moods:
