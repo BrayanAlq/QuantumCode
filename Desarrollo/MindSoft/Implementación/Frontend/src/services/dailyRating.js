@@ -1,4 +1,4 @@
-import { API_URL } from './constants';
+import { API_URL } from '@env';
 
 export const createDailyRating = async (rating, date, token) => {
   try {
