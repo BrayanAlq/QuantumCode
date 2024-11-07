@@ -1,5 +1,12 @@
-import React from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
+import { useRecomendaciones } from "../hooks/userRecomendaciones";
 
 // Componente para cada tarjeta
 const MessageCard = ({ type, text }) => {
@@ -7,7 +14,7 @@ const MessageCard = ({ type, text }) => {
     <View
       style={[
         styles.card,
-        type === "mensaje" ? styles.mensaje : styles.recomendacion,
+        type === "animo" ? styles.animo : styles.recomendations,
       ]}
     >
       <Text style={styles.cardText}>{text}</Text>
@@ -16,59 +23,36 @@ const MessageCard = ({ type, text }) => {
 };
 
 const Recomendaciones = () => {
-  // Datos de ejemplo
-  const data = [
-    {
-      id: "1",
-      type: "mensaje",
-      text: "Si te cansas, aprende a descansar, no a renunciar.Si te cansas, aprende a descansar, no a renunciar.Si te cansas, aprende a descansar, no a renunciar.",
-    },
-    {
-      id: "2",
-      type: "recomendacion",
-      text: "Una mente entusiasta encuentra oportunidades en todas partes.",
-    },
-    {
-      id: "3",
-      type: "mensaje",
-      text: "Al final gana quien todas las mañanas se levanta.",
-    },
-    {
-      id: "4",
-      type: "recomendacion",
-      text: "Tu velocidadvelocidadvelocidadvelocidadvelocidadvelocidadvelocidad no importa, adelante es adelante.",
-    },
-    {
-      id: "5",
-      type: "mensaje",
-      text: "No pongas tu arma en silencio solo porque tu enemigo sonríe.",
-    },
-    {
-      id: "6",
-      type: "recomendacion",
-      text: "La distancia no se mide en kilómetros, se mide en intentos.stancia no se mide en kilómetros, se mide en intentos.",
-    },
-    // Más tarjetas...
-  ];
+  const { recomendaciones, fetchRecomendaciones, isLoading, error } =
+    useRecomendaciones();
 
-  // Dividir los elementos en dos columnas
-  const column1 = data.filter((_, index) => index % 2 === 0);
-  const column2 = data.filter((_, index) => index % 2 !== 0);
+  // Llama al hook al montar la pantalla
+  useEffect(() => {
+    fetchRecomendaciones();
+  }, []);
+  console.log(recomendaciones, error, isLoading);
 
   return (
     <ScrollView contentContainerStyle={styles.containerMain}>
       <Text style={styles.title}>Recomendaciones</Text>
 
+      {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
+      {error && <Text style={styles.errorText}>{error}</Text>}
+
       <View style={styles.columnsContainer}>
         <View style={styles.column}>
-          {column1.map((item) => (
-            <MessageCard key={item.id} type={item.type} text={item.text} />
-          ))}
+          {recomendaciones
+            .filter((_, index) => index % 2 === 0)
+            .map((item, index) => (
+              <MessageCard key={index} type={item.title} text={item.content} />
+            ))}
         </View>
         <View style={styles.column}>
-          {column2.map((item) => (
-            <MessageCard key={item.id} type={item.type} text={item.text} />
-          ))}
+          {recomendaciones
+            .filter((_, index) => index % 2 !== 0)
+            .map((item, index) => (
+              <MessageCard key={index} type={item.title} text={item.content} />
+            ))}
         </View>
       </View>
     </ScrollView>
@@ -87,6 +71,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
   },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginVertical: 10,
+  },
   columnsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -100,10 +89,10 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
   },
-  mensaje: {
+  animo: {
     backgroundColor: "#D5F5E3",
   },
-  recomendacion: {
+  recomendations: {
     backgroundColor: "#F9E79F",
   },
   cardText: {

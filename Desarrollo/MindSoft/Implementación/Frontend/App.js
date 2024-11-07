@@ -21,7 +21,7 @@ export default function App() {
 
   function MyStack() {
     return (
-      <Stack.Navigator initialRouteName="Recomendaciones">
+      <Stack.Navigator initialRouteName="login">
         <Stack.Screen
           name="login"
           component={login}
