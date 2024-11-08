@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { EnviarNota } from '../icons/EnviarNota';
+import { useJournal } from '../hooks/useJournal';
 
 export default function AgregarNotas({ navigation }) {
     const [currentMonth, setCurrentMonth] = useState('');
     const [inputHeight, setInputHeight] = useState(40); // Altura inicial del TextInput
-    const [text, setText] = useState(''); // Estado para almacenar el texto del TextInput
+    const [text, setText] = useState('');
+    const { createNewJournal, loading, error, token } = useJournal();
 
     useEffect(() => {
         const date = new Date();
@@ -17,11 +19,33 @@ export default function AgregarNotas({ navigation }) {
         setCurrentMonth(monthNames[date.getMonth()]);
     }, []);
 
-    const handleSend = () => {
-        // Aquí puedes agregar la lógica para enviar la nota
-        // Después de enviar, limpiamos el campo de texto
-        setText('');
-    };
+    const handleSend = async () => {
+        if (!text.trim()) {
+          Alert.alert('Error', 'Por favor, escribe algo en tu diario antes de enviarlo.');  // Validamos si hay texto
+          return;
+        }
+    
+        const date = new Date();
+        const formattedDate = date.toISOString().split('T')[0];  // Formateamos la fecha como YYYY-MM-DD
+    
+        try {
+          if (!token) {
+            throw new Error('No se ha encontrado el token de autenticación');
+          }
+    
+          const result = await createNewJournal(text, formattedDate);
+    
+          if (result) {
+            Alert.alert('Éxito', 'Tu diario ha sido guardado exitosamente.');
+            setText('');
+          } else {
+            throw new Error('Hubo un error al guardar el diario');
+          }
+        } catch (error) {
+          console.error('Error al crear diario:', error);
+          Alert.alert('Error', error.message || 'Hubo un problema al crear tu diario');
+        }
+      };
 
     const abrirMenu = () => {
         navigation.openDrawer(); 
@@ -114,5 +138,4 @@ const styles = StyleSheet.create({
         marginTop: 715,
         marginLeft: 300,
     }
-
 });
