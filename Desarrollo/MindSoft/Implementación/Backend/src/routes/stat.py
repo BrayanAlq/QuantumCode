@@ -8,7 +8,7 @@ from ..schemas.user import UserToJwt
 from ..controllers.stat import get_rating_days, get_rating_days_by_week, get_moods_stats, get_moods_stats_by_week
 
 stat_router = APIRouter()
-@stat_router.get("/stats-rating")
+@stat_router.post("/stats-rating")
 def get_stats_rating(week_stats: WeekStats, db: Session = Depends(get_db), user: UserToJwt = Depends(get_current_user)):
     rating_week = get_rating_days_by_week(db, user, week_stats)
     rating_all = get_rating_days(db, user)
