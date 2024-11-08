@@ -38,14 +38,14 @@ const Recomendaciones = ({ navigation }) => {
 };
 
   return (
-    
-    <ScrollView contentContainerStyle={styles.containerMain}>
-      <View style={styles.header}>
-            <TouchableOpacity onPress={abrirMenu}> 
-                <Ionicons name="menu" size={40} color="black" />
-                </TouchableOpacity>
-                <View style={styles.separator} />
-            </View>
+    <View style={styles.containerMain}>
+    <View style={styles.header}>
+      <TouchableOpacity onPress={abrirMenu}>
+        <Ionicons name="menu" size={40} color="black" paddingTop={5} />
+      </TouchableOpacity>
+      <View style={styles.separator} />
+    </View>
+    <ScrollView contentContainerStyle={styles.scrollContent}>
       <Text style={styles.title}>Recomendaciones</Text>
 
       {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
@@ -68,20 +68,39 @@ const Recomendaciones = ({ navigation }) => {
         </View>
       </View>
     </ScrollView>
-  );
+  </View>
+);
 };
 
 const styles = StyleSheet.create({
+
   containerMain: {
-    padding: 10,
     backgroundColor: "#ADC0D1",
-    flexGrow: 1,
+    paddingTop:35,
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    backgroundColor: '#0B72D0',
+    height: 50,
+    alignItems: 'center',
+    paddingLeft: 10,
+  },
+  separator: {
+    width: 4,
+    height: 50,
+    backgroundColor: '#ADC0D1',
+    marginHorizontal: 10,
+  },
+  scrollContent: {
+    paddingTop: 10,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
+    color: '#0B72D2',
   },
   errorText: {
     color: "red",

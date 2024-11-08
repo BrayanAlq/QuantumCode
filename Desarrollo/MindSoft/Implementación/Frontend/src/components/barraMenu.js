@@ -7,7 +7,7 @@ import {  DrawerContentScrollView } from '@react-navigation/drawer';
 export default function CustomDrawerContent(props) {
   return (
     <DrawerContentScrollView {...props} style={styles.drawerContainer} >
-      <TouchableOpacity style={styles.drawerItem} onPress={() => props.navigation.navigate('DiarioNotas')} key="perfil" >
+      <TouchableOpacity style={styles.drawerItem} onPress={() => props.navigation.navigate('Perfil')} key="perfil" >
         <Image source={require('../../assets/userlogo.png')} style={styles.iconos} resizeMode="contain" />
         <Text style={styles.drawerLabel}>Perfil</Text>
       </TouchableOpacity>

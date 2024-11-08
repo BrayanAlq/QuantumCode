@@ -8,6 +8,7 @@ import CustomDrawerContent from "./src/components/barraMenu";
 import PantallaBienvenida from "./src/screens/bienvenida";
 import login from "./src/screens/login";
 import Confirmacion from "./src/screens/Confirmacion";
+import Perfil from "./src/screens/perfil";
 import NuevoObjetivo from "./src/screens/nuevo_objetivo";
 import ModificarObjetivo from "./src/screens/mod_objetivo";
 import SeguimientoObjetivo from "./src/screens/seg_objetivos";
@@ -44,6 +45,12 @@ import Recomendaciones from "./src/screens/recomendaciones";
         <Stack.Screen
           name="Welcome"
           component={PantallaBienvenida}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Perfil"
+          component={Perfil}
           options={{ headerShown: false }}
         />
 
@@ -106,6 +113,7 @@ import Recomendaciones from "./src/screens/recomendaciones";
           },
         }} >
           <Drawer.Screen name="Home" component={MyStack} options={{ headerShown: false }} />
+          <Drawer.Screen name="Perfil" component={Perfil} options={{ headerShown: false }}/>
           <Drawer.Screen name="DiarioNotas" component={Notas} options={{ headerShown: false }}/>
           <Drawer.Screen name="SeguimientoObjetivo" component={SeguimientoObjetivo} options={{ headerShown: false }}/>
           <Drawer.Screen name="Estadisticas" component={Estadisticas} options={{ headerShown: false }}/>

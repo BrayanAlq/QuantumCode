@@ -37,10 +37,10 @@ export default function Estadisticas({ navigation }) {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.header}>
-            <TouchableOpacity onPress={abrirMenu}>
-                <Ionicons name="menu" size={40} color="black" paddingTop={5} />
-            </TouchableOpacity>
-                <View style={styles.separator} />
+                <TouchableOpacity onPress={abrirMenu}>
+                    <Ionicons name="menu" size={40} color="black" paddingTop={5} />
+                </TouchableOpacity>
+                    <View style={styles.separator} />
             </View>
 
             <View style={styles.boxContainer}>
