@@ -3,58 +3,142 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native
 import { Ionicons } from '@expo/vector-icons';
 import { PlusIcon } from '../icons/PlusColorC';
 import { useNavigation } from '@react-navigation/native';
+import { useJournal } from '../hooks/useJournal';
 
 export default function Notas() {
     const [notasPorMes, setNotasPorMes] = useState({});
+    const [mockNotas, setMockNotas] = useState([]);
     const navigation = useNavigation();
+    const { getJournals, journals, loading, error } = useJournal();
+    
+    // Mapa de los meses con número
+    const month_number = {
+        "Enero": "01",
+        "Febrero": "02",
+        "Marzo": "03",
+        "Abril": "04",
+        "Mayo": "05",
+        "Junio": "06",
+        "Julio": "07",
+        "Agosto": "08",
+        "Septiembre": "09",
+        "Octubre": "10",
+        "Noviembre": "11",
+        "Diciembre": "12"
+    };
+
+    // Función para convertir la fecha a formato "YYYY-MM-DD"
+    const parseDate = (dateString, month, year) => {
+        console.log("Fecha recibida:", dateString);  // Log para verificar qué fecha estamos recibiendo
+    
+        if (!dateString || typeof dateString !== 'string') {
+            console.error("Fecha no válida:", dateString);
+            return null;
+        }
+
+        const match = dateString.match(/^(\d{1,2})\s([A-Za-z]+)$/);
+        if (match) {
+            const day = match[1];
+            const weekday = match[2].toLowerCase();
+    
+            console.log("Día:", day, "Día de la semana:", weekday);
+            
+            // Convertimos el mes a su número correspondiente
+            const monthNumber = month_number[month];
+            console.log("Mes detectado:", monthNumber);
+    
+            if (monthNumber && day) {
+                return `${year}-${monthNumber}-${day}`;
+            } else {
+                console.error("Mes o día no válido:", weekday, day);
+                return null;
+            }
+        } else {
+            console.error("Formato de fecha no válido:", dateString);
+            return null;
+        }
+    };
 
     useEffect(() => {
-        const mockNotas = [
-            { journal_id: 1, description: "Pasé tiempo con amigos y disfrutamos de una cena en casa.", date: "2024-01-02", user_id: 101 },
-            { journal_id: 2, description: "Me tomé el día para descansar y recargar energías.", date: "2024-11-04", user_id: 101 },
-            { journal_id: 3, description: "Asistí a una conferencia sobre desarrollo personal, fue muy interesante.", date: "2024-11-09", user_id: 101 },
-            { journal_id: 4, description: "Hoy fue un día productivo en el trabajo. Me siento motivado.", date: "2024-11-02", user_id: 101 },
-            { journal_id: 5, description: "Hice una caminata en el parque y disfruté de la naturaleza.", date: "2024-09-08", user_id: 101 },
-            { journal_id: 6, description: "Reflexioné sobre mis logros de la semana y estoy agradecido por todo lo aprendido.", date: "2024-09-09", user_id: 101 },
-            { journal_id: 7, description: "Vi una película inspiradora que me motivó a seguir mis sueños.", date: "2024-10-06", user_id: 101 },
-            { journal_id: 8, description: "Tuve una reunión productiva con mi equipo de trabajo, logramos avanzar en el proyecto.", date: "2024-10-10", user_id: 101 }
-        ];
-
-        // Ordenar las notas por fecha (de más nueva a más antigua)
-        mockNotas.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-        // Agrupar notas por mes
-        const groupedNotas = mockNotas.reduce((acc, nota) => {
-            const date = new Date(nota.date);
-            const month = date.toLocaleString('default', { month: 'long' });
-            const key = month; // Crear clave solo con el Mes
-
-            if (!acc[key]) {
-                acc[key] = []; // Si no existe, inicializar como un array vacío
+        const fetchData = async () => {
+            try {
+                await getJournals();
+            } catch (err) {
+                console.error("Error al obtener los journals:", err);
             }
-            acc[key].push(nota); // Agregar nota al mes correspondiente
-
-            return acc;
-        }, {});
-
-        setNotasPorMes(groupedNotas);
+        };
+        fetchData();
     }, []);
+
+        useEffect(() => {
+            if (journals && journals.length > 0) {
+                console.log("Journals completos:", JSON.stringify(journals, null, 2));
+        
+                const sortedNotas = journals.flatMap(journal => {
+                    console.log("Journal:", journal);
+        
+                    return journal.months.flatMap(month => {
+                        console.log("Month:", month);
+                        const monthName = month.month;
+        
+                        return month.journals.map(nota => {
+                            console.log("Nota:", nota);
+        
+                            const fechaConvertida = parseDate(nota.date, monthName, "2024");
+        
+                            return {
+                                ...nota,
+                                journal_id: journal.id,
+                                month: monthName,
+                                date: fechaConvertida,
+                            };
+                        });
+                    });
+                }).sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+                // Agrupar las notas por mes
+                const groupedNotas = sortedNotas.reduce((acc, nota) => {
+                    const dateString = nota.date;
+                    console.log("Fecha recibida en agrupamiento:", dateString);
+
+                    if (!dateString) {
+                        console.error("Fecha inválida:", dateString);
+                        return acc;
+                    }
+        
+                    const monthNumber = dateString.split('-')[1];
+                    const monthNameInSpanish = Object.keys(month_number).find(key => month_number[key] === monthNumber);
+
+                    if (!acc[monthNameInSpanish]) {
+                        acc[monthNameInSpanish] = [];
+                    }
+                    acc[monthNameInSpanish].push(nota);
+                    return acc;
+                }, {});
+        
+                setNotasPorMes(groupedNotas);
+            }
+        }, [journals]);
 
     // Función para renderizar cada nota
     const renderItem = ({ item }) => (
-        <View style={styles.nota} key={item.journal_id}>
+        <View style={styles.nota}>
             <Text style={styles.textoNota}>{item.description}</Text>
             <Text style={styles.fechaNota}>{item.date}</Text>
         </View>
     );
-
+    
     // Función para renderizar la lista agrupada
     const renderNotasPorMes = () => {
         return Object.entries(notasPorMes).map(([mes, notas]) => (
-            <View key={mes}>
-                <Text style={styles.mesTitulo}>{mes}</Text>
-                {notas.map(nota => renderItem({ item: nota }))} 
-            </View>
+          <View key={mes}>
+            <Text style={styles.mesTitulo}>{mes}</Text>
+            {notas.map(nota => (
+              <View key={nota.journal_id}>
+                {renderItem({ item: nota })}
+              </View>
+            ))}
+          </View>
         ));
     };
 
@@ -77,14 +161,19 @@ export default function Notas() {
             </View>
 
             <FlatList
-                data={Object.keys(notasPorMes)} // Usar las claves de notasPorMes para el FlatList
-                keyExtractor={item => item} // La clave será el nombre del mes
-                renderItem={({ item }) => (
-                    <View>
-                        <Text style={styles.mesTitulo}>{item}</Text>
-                        {notasPorMes[item].map(nota => renderItem({ item: nota }))} 
+              data={Object.keys(notasPorMes)}
+              keyExtractor={item => item}
+              renderItem={({ item }) => (
+                <View key={item}>
+                  <Text style={styles.mesTitulo}>{item}</Text>
+
+                  {notasPorMes[item].map((nota) => (
+                    <View key={nota.journal_id}>
+                      {renderItem({ item: nota })}
                     </View>
-                )}
+                  ))}
+                </View>
+              )}
             />
 
             <TouchableOpacity
