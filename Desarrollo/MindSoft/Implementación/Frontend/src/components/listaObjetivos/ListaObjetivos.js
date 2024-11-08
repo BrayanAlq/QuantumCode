@@ -21,22 +21,17 @@ export default function ListaObjetivos() {
   const navigation = useNavigation();
   const route = useRoute();
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchGoals(); // Llama a fetchGoals cada vez que la pantalla está en foco
-    }, [])
-  );
-
   useEffect(() => {
     fetchGoals(); // Llama a fetchGoals al montar el componente
   }, []);
 
-  useEffect(() => {
-    if (route.params?.refresh) {
-      fetchGoals(); // Llama a fetchGoals si hay un parámetro de refresco
-    }
-  }, [route.params?.refresh]);
-
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchGoals();
+      console.log("SIIII");
+    }, [route])
+  );
+  console.log(route.params?.refresh);
   console.log(goals);
 
   return (

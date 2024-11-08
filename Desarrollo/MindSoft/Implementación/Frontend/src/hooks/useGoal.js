@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import * as SecureStore from 'expo-secure-store';
-import { API_URL } from '@env';
+import { useState, useEffect } from "react";
+import * as SecureStore from "expo-secure-store";
+import { API_URL } from "@env";
 
 export const useGoals = () => {
   const [goals, setGoals] = useState([]);
@@ -11,15 +11,19 @@ export const useGoals = () => {
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        const storedToken = await SecureStore.getItemAsync('authToken');
+        const storedToken = await SecureStore.getItemAsync("authToken");
         setToken(storedToken);
+        // Llamamos a fetchGoals solo cuando el token se haya recuperado
+        if (storedToken) {
+          fetchGoals(); // Llama a fetchGoals con el token recuperado
+        }
       } catch (err) {
-        setError('Error retrieving token');
+        setError("Error retrieving token");
       }
     };
 
     fetchToken();
-  }, []);
+  }, []); // Este useEffect se ejecuta solo una vez al montar el componente
 
   const fetchGoals = async () => {
     if (!token) return; // No hacer nada si no hay token
@@ -28,15 +32,15 @@ export const useGoals = () => {
     setError(null);
     try {
       const response = await fetch(`${API_URL}/goal-active`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch goals');
+        throw new Error("Failed to fetch goals");
       }
 
       const data = await response.json();
@@ -55,16 +59,16 @@ export const useGoals = () => {
   const createGoal = async (goalData) => {
     try {
       const response = await fetch(`${API_URL}/goal-create`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(goalData),
       });
 
       if (!response.ok) {
-        throw new Error('Error al agregar el objetivo');
+        throw new Error("Error al agregar el objetivo");
       }
 
       await fetchGoals(); // Actualiza la lista después de crear
@@ -76,16 +80,16 @@ export const useGoals = () => {
   const updateGoal = async (goalData) => {
     try {
       const response = await fetch(`${API_URL}/goal-update`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(goalData),
       });
 
       if (!response.ok) {
-        throw new Error('Error al modificar el objetivo');
+        throw new Error("Error al modificar el objetivo");
       }
 
       await fetchGoals(); // Actualiza la lista después de modificar
@@ -97,16 +101,16 @@ export const useGoals = () => {
   const deleteGoal = async (goalId) => {
     try {
       const response = await fetch(`${API_URL}/goal-delete`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ goal_id: goalId }),
       });
 
       if (!response.ok) {
-        throw new Error('Error al eliminar el objetivo');
+        throw new Error("Error al eliminar el objetivo");
       }
 
       await fetchGoals(); // Actualiza la lista después de eliminar
@@ -115,5 +119,13 @@ export const useGoals = () => {
     }
   };
 
-  return { goals, loading, error, createGoal, updateGoal, deleteGoal, fetchGoals };
+  return {
+    goals,
+    loading,
+    error,
+    createGoal,
+    updateGoal,
+    deleteGoal,
+    fetchGoals,
+  };
 };
