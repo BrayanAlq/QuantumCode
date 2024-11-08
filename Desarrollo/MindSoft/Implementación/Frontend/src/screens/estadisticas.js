@@ -1,29 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { usePromedio } from '../hooks/usePromedio';
+import {useNavigation,useRoute,useFocusEffect} from "@react-navigation/native";
 
-export default function Estadisticas({ navigation }) {
+export default function Estadisticas() {
     const logo = require("../../assets/clipart2905515.png");
     const [dailyRatings, setDailyRatings] = useState([]);
     const [currentRating, setCurrentRating] = useState(0);
-    const [estado, setEstado] = useState(new Animated.Value(0)); // Cambié esto para manejar el valor de la animación
+    const [estado, setEstado] = useState(new Animated.Value(0)); // Inicializa estado de animación
+    const { rating_week, rating_all, error, loading, fetchStatRating } = usePromedio();
+    const navigation = useNavigation();
+    const route = useRoute();
+    const fechaActual = new Date();
+    const año = fechaActual.getFullYear();
+    const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
+    const día = String(fechaActual.getDate()).padStart(2, '0');
+    const fecha = `${año}-${mes}-${día}`;
+    
+    const promedioSemana = rating_week?.average_rating || 0;
 
     const emojisCalif = [
         { emoji: '😖' },
         { emoji: '😊' },
     ];
 
-    // Generar datos ficticios de calificaciones para los últimos 7 días
     useEffect(() => {
-        const mockRatings = Array.from({ length: 7 }, () => Math.floor(Math.random() * 5) + 1);
-        setDailyRatings(mockRatings);
-        const average = mockRatings.reduce((a, b) => a + b, 0) / mockRatings.length;
-        setCurrentRating(average); // Establece el valor del medidor como el promedio
+        fetchStatRating(fecha);
+    }, [fecha]);
 
-        const prm = 2.26 + ((currentRating.toFixed(2)-1) * 0.62);
-        setEstado(new Animated.Value(prm)); // Actualiza el valor de la animación cuando el promedio cambia
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchStatRating(fecha);
+        }, [route])
+    );
 
-    }, [currentRating]); // El useEffect se ejecuta cuando el currentRating cambia
+    // Usar useEffect para actualizar el estado de la animación cuando el promedio cambie
+    useEffect(() => {
+        const prm = 2.26 + ((promedioSemana.toFixed(2)-1) * 0.62);
+        setEstado(new Animated.Value(prm));
+    }, [promedioSemana]); // Solo se ejecutará cuando promedioSemana cambie
 
     const animInterpolation = estado.interpolate({
         inputRange: [-1, 1],
@@ -31,22 +47,24 @@ export default function Estadisticas({ navigation }) {
     });
 
     const abrirMenu = () => {
-        navigation.openDrawer(); 
+        navigation.openDrawer();
     };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.header}>
-            <TouchableOpacity onPress={abrirMenu}>
-                <Ionicons name="menu" size={40} color="black" paddingTop={5} />
-            </TouchableOpacity>
+                <TouchableOpacity onPress={abrirMenu}>
+                    <Ionicons name="menu" size={40} color="black" paddingTop={5} />
+                </TouchableOpacity>
                 <View style={styles.separator} />
             </View>
+
+            <Text style={styles.titulo}>Mis estadísticas</Text>
 
             <View style={styles.boxContainer}>
                 <Text style={styles.boxText}>Estadística de calificación del día</Text>
                 <Text style={styles.averageText}>Promedio semanal</Text>
-                
+
                 <Image source={logo} style={styles.userImage} />
 
                 {/* Indicador con rotación sobre su propio eje */}
@@ -60,7 +78,7 @@ export default function Estadisticas({ navigation }) {
                 </Animated.View>
 
                 <View style={styles.boxContainer1}>
-                    <Text style={styles.averageText1}>{currentRating.toFixed(1)}</Text>
+                    <Text style={styles.averageText1}>{promedioSemana.toFixed(1)}</Text>
                 </View>
 
                 <View style={styles.emojiRow}>
@@ -74,6 +92,7 @@ export default function Estadisticas({ navigation }) {
         </ScrollView>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -103,9 +122,9 @@ const styles = StyleSheet.create({
     boxContainer: {
         backgroundColor: 'white',
         borderRadius: 10,
-        padding: 20,
+        padding: 15,
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
@@ -119,10 +138,18 @@ const styles = StyleSheet.create({
         color: 'black',
         textAlign: 'left',
     },
+    titulo: {
+        padding: 10,
+        alignSelf: 'center',
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: '#0B72D0',
+    },
     averageText: {
         fontSize: 18,
         color: '#0B72D0',
         marginVertical: 10,
+        fontWeight: 'bold',
     },
     averageText1: {
         fontSize: 18,
