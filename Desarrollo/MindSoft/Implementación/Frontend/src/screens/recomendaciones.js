@@ -4,9 +4,11 @@ import {
   Text,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import { useRecomendaciones } from "../hooks/userRecomendaciones";
+import { Ionicons } from '@expo/vector-icons';
 
 // Componente para cada tarjeta
 const MessageCard = ({ type, text }) => {
@@ -22,7 +24,7 @@ const MessageCard = ({ type, text }) => {
   );
 };
 
-const Recomendaciones = () => {
+const Recomendaciones = ({ navigation }) => {
   const { recomendaciones, fetchRecomendaciones, isLoading, error } =
     useRecomendaciones();
 
@@ -31,9 +33,19 @@ const Recomendaciones = () => {
     fetchRecomendaciones();
   }, []);
   console.log(recomendaciones, error, isLoading);
+  const abrirMenu = () => {
+    navigation.openDrawer(); 
+};
 
   return (
+    
     <ScrollView contentContainerStyle={styles.containerMain}>
+      <View style={styles.header}>
+            <TouchableOpacity onPress={abrirMenu}> 
+                <Ionicons name="menu" size={40} color="black" />
+                </TouchableOpacity>
+                <View style={styles.separator} />
+            </View>
       <Text style={styles.title}>Recomendaciones</Text>
 
       {isLoading && <ActivityIndicator size="large" color="#0000ff" />}

@@ -16,7 +16,7 @@ export default function PantallaBienvenida({ navigation }) {
       setIsLoading(false);
       if (!loading && status !== null) {
         if (!status) {
-          navigation.replace('NuevoObjetivo');
+          navigation.replace('Recomendaciones');
         } else {
           setEmojiPopupVisible(true);
         }

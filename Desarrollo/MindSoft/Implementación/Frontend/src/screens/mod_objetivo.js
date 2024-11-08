@@ -29,6 +29,10 @@ export default function ModificarObjetivo({ navigation, route }) {
     navigation.navigate("SeguimientoObjetivo", { refresh: true });
   };
 
+  const abrirMenu = () => {
+    navigation.openDrawer();
+  };
+
   const handleSelectTiempo = (value) => {
     setTiempo(value);
     setModalVisible(false);
@@ -59,7 +63,7 @@ export default function ModificarObjetivo({ navigation, route }) {
     <View style={styles.container}>
       {/* Barra de navegación superior */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={regresar}>
+        <TouchableOpacity onPress={abrirMenu}>
           <Ionicons name="menu" size={40} color="black" />
         </TouchableOpacity>
         <View style={styles.separator} />

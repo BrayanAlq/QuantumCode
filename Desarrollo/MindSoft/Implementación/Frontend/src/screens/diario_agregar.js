@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-nativ
 import { Ionicons } from '@expo/vector-icons';
 import { EnviarNota } from '../icons/EnviarNota';
 
-export default function AgregarNotas() {
+export default function AgregarNotas({ navigation }) {
     const [currentMonth, setCurrentMonth] = useState('');
     const [inputHeight, setInputHeight] = useState(40); // Altura inicial del TextInput
     const [text, setText] = useState(''); // Estado para almacenar el texto del TextInput
@@ -23,10 +23,16 @@ export default function AgregarNotas() {
         setText('');
     };
 
+    const abrirMenu = () => {
+        navigation.openDrawer(); 
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Ionicons name="menu" size={40} color="black" paddingTop={5} />
+                <TouchableOpacity onPress={abrirMenu}>
+                    <Ionicons name="menu" size={40} color="black" paddingTop={5} />
+                </TouchableOpacity>
                 <View style={styles.separator} />
             </View>
             <View style={styles.title}>
