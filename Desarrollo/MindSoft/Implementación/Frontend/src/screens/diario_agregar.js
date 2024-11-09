@@ -21,31 +21,50 @@ export default function AgregarNotas({ navigation }) {
 
     const handleSend = async () => {
         if (!text.trim()) {
-          Alert.alert('Error', 'Por favor, escribe algo en tu diario antes de enviarlo.');  // Validamos si hay texto
-          return;
+            Alert.alert('Error', 'Por favor, escribe algo en tu diario antes de enviarlo.');
+            return;
         }
-    
-        const date = new Date();
-        const formattedDate = date.toISOString().split('T')[0];  // Formateamos la fecha como YYYY-MM-DD
     
         try {
-          if (!token) {
-            throw new Error('No se ha encontrado el token de autenticación');
-          }
+            const date = new Date();
+            console.log("Fecha original:", date);
     
-          const result = await createNewJournal(text, formattedDate);
+            // Usamos Intl.DateTimeFormat para convertir a la zona horaria de Lima
+            const options = { 
+                timeZone: "America/Lima", 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit'
+            };
     
-          if (result) {
-            Alert.alert('Éxito', 'Tu diario ha sido guardado exitosamente.');
-            setText('');
-          } else {
-            throw new Error('Hubo un error al guardar el diario');
-          }
+            // Formateamos solo la parte de la fecha
+            const limaDate = new Intl.DateTimeFormat('en-US', options).format(date);
+            
+            console.log("Fecha en Lima (solo fecha):", limaDate);
+    
+            // Formato esperado para la fecha: YYYY-MM-DD
+            const [month, day, year] = limaDate.split('/'); // Separamos la fecha
+            const formattedDate = `${year}-${month}-${day}`; // Reordenamos en el formato YYYY-MM-DD
+    
+            console.log("Fecha final en formato YYYY-MM-DD:", formattedDate);
+    
+            if (!token) {
+                throw new Error('No se ha encontrado el token de autenticación');
+            }
+    
+            const result = await createNewJournal(text, formattedDate);
+    
+            if (result) {
+                Alert.alert('Éxito', 'Tu diario ha sido guardado exitosamente.');
+                setText('');
+            } else {
+                throw new Error('Hubo un error al guardar el diario');
+            }
         } catch (error) {
-          console.error('Error al crear diario:', error);
-          Alert.alert('Error', error.message || 'Hubo un problema al crear tu diario');
+            console.error('Error al crear diario:', error);
+            Alert.alert('Error', error.message || 'Hubo un problema al crear tu diario');
         }
-      };
+    };
 
     const abrirMenu = () => {
         navigation.openDrawer(); 
