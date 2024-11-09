@@ -1,8 +1,23 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, Image ,TouchableOpacity} from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image ,TouchableOpacity,ActivityIndicator} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useUserInfo } from '../hooks/useUser'; 
+
 
 export default function Perfil({ navigation }) {
+  const { userInfo, loading, error } = useUserInfo();
+
+    if (loading) {
+        return <ActivityIndicator size="large" color="#0B72D2" style={styles.loading} />;
+    }
+
+    if (error) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>Error: {error}</Text>
+            </View>
+        );
+    }
 
     const abrirMenu = () => {
         navigation.openDrawer(); 
@@ -24,28 +39,28 @@ export default function Perfil({ navigation }) {
         <Text style={styles.profileTitle}>Perfil de Estudiante</Text>
         
             <View style={styles.inputContainer}>
-            <Ionicons name="person-outline" size={24} color="black" style={styles.icon} />
-            <TextInput placeholder="Nombre" style={styles.input} />
+              <Ionicons name="person-outline" size={24} color="#0B72D2" style={styles.icon} />
+              <TextInput placeholder="Nombre"  value={userInfo?.first_name || ''} style={styles.input} editable={false} />
             </View>
             
             <View style={styles.inputContainer}>
-            <Ionicons name="person-outline" size={24} color="black" style={styles.icon} />
-            <TextInput placeholder="Apellidos" style={styles.input} />
+            <Ionicons name="person-outline" size={24} color="#0B72D2" style={styles.icon} />
+            <TextInput placeholder="Apellidos" value={userInfo?.last_name || ''} style={styles.input} editable={false}/>
             </View>
             
             <View style={styles.inputContainer}>
-            <Ionicons name="home-outline" size={24} color="black" style={styles.icon} />
-            <TextInput placeholder="Dirección" style={styles.input} />
+            <Ionicons name="home-outline" size={24} color="#0B72D2" style={styles.icon} />
+            <TextInput placeholder="Dirección" value={userInfo?.address || ''} style={styles.input} editable={false} />
             </View>
             
             <View style={styles.inputContainer}>
-            <Ionicons name="school-outline" size={24} color="black" style={styles.icon} />
-            <TextInput placeholder="Facultad" style={styles.input} />
+            <Ionicons name="school-outline" size={24} color="#0B72D2" style={styles.icon} />
+            <TextInput placeholder="Facultad" value={userInfo?.faculty || ''} style={styles.input} editable={false} />
             </View>
             
             <View style={styles.inputContainer}>
-            <Ionicons name="clipboard-outline" size={24} color="black" style={styles.icon} />
-            <TextInput placeholder="Ponderado" style={styles.input} />
+            <Ionicons name="clipboard-outline" size={24} color="#0B72D2" style={styles.icon} />
+            <TextInput placeholder="Ponderado" value={String(userInfo?.average || '')} style={styles.input} editable={false} />
             </View>
         </View>
     </View>
@@ -106,6 +121,20 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
+    fontSize: 16,
+    color: 'black',
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: 'red',
     fontSize: 16,
   },
 });
