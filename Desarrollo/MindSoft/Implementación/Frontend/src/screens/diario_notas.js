@@ -36,19 +36,22 @@ export default function Notas() {
             return null;
         }
 
-        const match = dateString.match(/^(\d{1,2})\s([A-Za-z]+)$/);
+        // Modificamos la expresión regular para aceptar letras con tildes
+        const match = dateString.match(/^(\d{1,2})\s([A-Za-záéíóúÁÉÍÓÚ]+)$/);
         if (match) {
-            const day = match[1];
-            const weekday = match[2].toLowerCase();
-    
+            const day = match[1];   // Día (por ejemplo "09" o "8")
+            const weekday = match[2].toLowerCase();   // Día de la semana (por ejemplo "domingo", "lunes", "sábado", etc.)
+
             console.log("Día:", day, "Día de la semana:", weekday);
-            
+
             // Convertimos el mes a su número correspondiente
             const monthNumber = month_number[month];
             console.log("Mes detectado:", monthNumber);
-    
+
             if (monthNumber && day) {
-                return `${year}-${monthNumber}-${day}`;
+                // Para asegurar que el día siempre tenga 2 dígitos
+                const dayFormatted = day.padStart(2, '0');  // Añade un cero a la izquierda si es necesario
+                return `${year}-${monthNumber}-${dayFormatted}`;
             } else {
                 console.error("Mes o día no válido:", weekday, day);
                 return null;
