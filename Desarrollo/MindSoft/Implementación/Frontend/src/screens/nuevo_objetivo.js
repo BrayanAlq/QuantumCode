@@ -52,7 +52,7 @@ export default function NuevoObjetivo({ navigation }) {
   };
 
   const regresar = () => {
-    navigation.navigate("SeguimientoObjetivo");
+    navigation.navigate("SeguimientoObjetivo", { refresh: true });
   };
 
   const abrirMenu = () => {
