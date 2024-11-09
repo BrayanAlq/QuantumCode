@@ -64,7 +64,7 @@ export default function NuevoObjetivo({ navigation }) {
       {/* Barra de navegación superior */}
       <View style={styles.header}>
         <TouchableOpacity onPress={abrirMenu}>
-          <Ionicons name="menu" size={40} color="black" />
+          <Ionicons name="menu" size={40} color="black" paddingTop={5}/>
         </TouchableOpacity>
         <View style={styles.separator} />
       </View>
@@ -160,13 +160,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ADC0D1",
+    paddingTop: 35,
   },
 
   header: {
     flexDirection: "row",
     backgroundColor: "#0B72D2",
     height: 50,
-    padding: 10,
+    paddingLeft: 10,
   },
 
   separator: {
