@@ -1,10 +1,16 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet,Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet,Image,BackHandler } from 'react-native';
 import {  DrawerContentScrollView } from '@react-navigation/drawer';
-
+import { logout } from '../services/auth';
 
 
 export default function CustomDrawerContent(props) {
+
+
+  const handleLogout = () => {
+    logout(props.navigation);
+  };
+
   return (
     <DrawerContentScrollView {...props} style={styles.drawerContainer} >
       <TouchableOpacity style={styles.drawerItem} onPress={() => props.navigation.navigate('Perfil')} key="perfil" >
@@ -29,6 +35,10 @@ export default function CustomDrawerContent(props) {
         <Text style={styles.drawerLabel}>Recomendaciones</Text>
       </TouchableOpacity>
       
+      <TouchableOpacity style={styles.drawerItem} onPress={handleLogout} key="salir">
+        <Image source={require('../../assets/salir.png')} style={styles.iconos} resizeMode="contain" />
+        <Text style={styles.drawerLabel}>Salir</Text>
+      </TouchableOpacity>
       
     </DrawerContentScrollView>
   );

@@ -104,10 +104,10 @@ import Recomendaciones from "./src/screens/recomendaciones";
   }
 
   export default function App() {
-
     return (
+      
       <NavigationContainer>
-        <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} /> } screenOptions={{
+        <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props}  /> } screenOptions={{
           drawerStyle: {
             width: 310, 
           },
@@ -121,7 +121,6 @@ import Recomendaciones from "./src/screens/recomendaciones";
           <Drawer.Screen name="NuevoObjetivo" component={NuevoObjetivo} options={{ headerShown: false }} />
           <Drawer.Screen name="ModificarObjetivo" component={ModificarObjetivo} options={{ headerShown: false }} />
           <Drawer.Screen name="AgregarNotas" component={AgregarNotas} options={{ headerShown: false }} />
-          
         </Drawer.Navigator>
       </NavigationContainer>
     );
