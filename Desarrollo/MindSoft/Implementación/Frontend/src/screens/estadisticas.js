@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Image, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { usePromedio } from '../hooks/usePromedio';
-import {useNavigation,useRoute,useFocusEffect} from "@react-navigation/native";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
+import { LineChart } from 'react-native-chart-kit'; // Importa LineChart
+import { Dimensions } from 'react-native'; // Para el tamaño del gráfico
+import * as SecureStore from 'expo-secure-store';
+import { useDailyRating } from '../hooks/useDailyRating';
 
 export default function Estadisticas() {
     const logo = require("../../assets/clipart2905515.png");
@@ -10,8 +14,11 @@ export default function Estadisticas() {
     const [currentRating, setCurrentRating] = useState(0);
     const [estado, setEstado] = useState(new Animated.Value(0)); // Inicializa estado de animación
     const { rating_week, rating_all, error, loading, fetchStatRating } = usePromedio();
+    const { fetchDailyRatings } = useDailyRating();
+    const [loadingData, setLoadingData] = useState(true);
     const navigation = useNavigation();
     const route = useRoute();
+
     const fechaActual = new Date();
     const año = fechaActual.getFullYear();
     const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
@@ -24,6 +31,38 @@ export default function Estadisticas() {
         { emoji: '😖' },
         { emoji: '😊' },
     ];
+
+    // Vamos a simular los datos de calificaciones diarias (en formato que mencionaste):
+    const dailyRatingsData = [
+        { daily_rating_id: 1, rating: 1, date: '2024-10-16', user_id: 1 },
+        { daily_rating_id: 2, rating: 3, date: '2024-11-07', user_id: 1 },
+        { daily_rating_id: 3, rating: 3, date: '2024-11-08', user_id: 1 },
+        { daily_rating_id: 4, rating: 3, date: '2024-11-09', user_id: 1 },
+    ];
+
+    useEffect(() => {
+        const obtenerCalificacionesDiarias = async () => {
+            try {
+                const token = await SecureStore.getItemAsync('authToken');
+                if (!token) {
+                    console.log('No se pudo obtener el token de autenticación');
+                    return;
+                }
+    
+                const data = await fetchDailyRatings(token);
+    
+                if (data && Array.isArray(data)) {
+                    setDailyRatings(data);  // Asegúrate de actualizar el estado
+                    setLoadingData(false);   // Datos obtenidos, se puede ocultar el indicador de carga
+                }
+            } catch (error) {
+                console.log('Error al obtener las calificaciones diarias:', error);
+                setLoadingData(false);   // En caso de error, también se oculta el indicador de carga
+            }
+        };
+    
+        obtenerCalificacionesDiarias();
+    }, []);
 
     useEffect(() => {
         fetchStatRating(fecha);
@@ -50,15 +89,58 @@ export default function Estadisticas() {
         navigation.openDrawer();
     };
 
+    const processDataForChart = (data) => {
+        if (!Array.isArray(data) || data.length === 0) {
+            console.log('Datos vacíos o inválidos:', data);
+            return {};  // Retorna un objeto vacío si no hay datos
+        }
+    
+        // Ordena las fechas para que se muestren correctamente
+        const sortedData = data.sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+        // Limita a los últimos 7 días
+        const limitedData = sortedData.slice(-7);
+    
+        // Inicializa un objeto para almacenar las calificaciones por fecha
+        const aggregatedData = {};
+    
+        limitedData.forEach(item => {
+            const { date, rating } = item;
+            if (!aggregatedData[date]) {
+                aggregatedData[date] = [];
+            }
+            aggregatedData[date].push(rating); // Agrega la calificación al array de esa fecha
+        });
+    
+        // Crea el objeto para el gráfico
+        const chartData = {
+            labels: Object.keys(aggregatedData),
+            datasets: [
+                {
+                    data: Object.keys(aggregatedData).map((date) => {
+                        const ratings = aggregatedData[date];  // Obtener todas las calificaciones de una fecha
+                        const average = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
+                        return average;
+                    }),
+                    color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,  // Definir color como función
+                    strokeWidth: 2, 
+                },
+            ],
+        };
+    
+        return chartData;
+    };
+
+    // Solo procesamos los datos si ya tenemos algo en dailyRatings
+    const chartData = dailyRatings.length > 0 ? processDataForChart(dailyRatings) : null;
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={abrirMenu}>
                     <Ionicons name="menu" size={40} color="black" paddingTop={5} />
                 </TouchableOpacity>
-
                     
-
                 <View style={styles.separator} />
 
             </View>
@@ -93,10 +175,42 @@ export default function Estadisticas() {
                     ))}
                 </View>
             </View>
-        </ScrollView>
+            {/* Indicador de carga si los datos aún no se han cargado */}
+            {loadingData ? (
+                <ActivityIndicator size="large" color="#0B72D0" />
+            ) : (
+                <View style={styles.boxContainer}>
+                    <Text style={styles.boxText}>Estadísticas de calificaciones diarias totales</Text>
+                    {/* Contenedor con desplazamiento horizontal */}
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollContainer}>
+                        {chartData ? (
+                            <LineChart
+                                data={chartData}
+                                width={chartData.labels.length * 150} // Aumenta el tamaño total del gráfico
+                                height={300} // Altura del gráfico
+                                chartConfig={{
+                                    backgroundColor: '#fff',
+                                    backgroundGradientFrom: '#fff',
+                                    backgroundGradientTo: '#fff',
+                                    decimalPlaces: 2, // Decimales
+                                    color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`, // Color de la línea
+                                    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Color de las etiquetas
+                                    style: {
+                                        borderRadius: 16,
+                                    },
+                                }}
+                                bezier // Usa curva Bezier para líneas suaves
+                                style={styles.chartStyle}
+                            />
+                        ) : (
+                            <Text>No hay suficientes datos para mostrar el gráfico.</Text>
+                        )}
+                    </ScrollView>
+                </View>
+            )}
+      </ScrollView>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -129,6 +243,7 @@ const styles = StyleSheet.create({
         padding: 15,
         alignItems: 'center',
         marginTop: 10,
+        marginBottom: 15,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
@@ -140,7 +255,7 @@ const styles = StyleSheet.create({
     boxText: {
         fontSize: 16,
         color: 'black',
-        textAlign: 'left',
+        textAlign: 'center',
     },
     titulo: {
         padding: 10,
