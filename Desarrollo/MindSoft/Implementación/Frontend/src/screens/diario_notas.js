@@ -11,7 +11,6 @@ export default function Notas() {
     const navigation = useNavigation();
     const { getJournals, journals, loading, error } = useJournal();
     
-    // Mapa de los meses con número
     const month_number = {
         "Enero": "01",
         "Febrero": "02",
@@ -29,35 +28,33 @@ export default function Notas() {
 
     // Función para convertir la fecha a formato "YYYY-MM-DD"
     const parseDate = (dateString, month, year) => {
-        console.log("Fecha recibida:", dateString);  // Log para verificar qué fecha estamos recibiendo
     
-        if (!dateString || typeof dateString !== 'string') {
-            console.error("Fecha no válida:", dateString);
-            return null;
-        }
-
-        // Modificamos la expresión regular para aceptar letras con tildes
-        const match = dateString.match(/^(\d{1,2})\s([A-Za-záéíóúÁÉÍÓÚ]+)$/);
-        if (match) {
-            const day = match[1];   // Día (por ejemplo "09" o "8")
-            const weekday = match[2].toLowerCase();   // Día de la semana (por ejemplo "domingo", "lunes", "sábado", etc.)
-
-            console.log("Día:", day, "Día de la semana:", weekday);
-
-            // Convertimos el mes a su número correspondiente
-            const monthNumber = month_number[month];
-            console.log("Mes detectado:", monthNumber);
-
-            if (monthNumber && day) {
-                // Para asegurar que el día siempre tenga 2 dígitos
-                const dayFormatted = day.padStart(2, '0');  // Añade un cero a la izquierda si es necesario
-                return `${year}-${monthNumber}-${dayFormatted}`;
-            } else {
-                console.error("Mes o día no válido:", weekday, day);
+        try {
+            if (!dateString || typeof dateString !== 'string') {
+                console.error("Fecha no válida:", dateString);
                 return null;
             }
-        } else {
-            console.error("Formato de fecha no válido:", dateString);
+
+            const match = dateString.match(/^(\d{1,2})\s([A-Za-záéíóúÁÉÍÓÚ]+)$/);
+            if (match) {
+                const day = match[1];
+                const weekday = match[2].toLowerCase();
+
+                const monthNumber = month_number[month];
+
+                if (monthNumber && day) {
+                    const dayFormatted = day.padStart(2, '0');
+                    return `${year}-${monthNumber}-${dayFormatted}`;
+                } else {
+                    console.error("Mes o día no válido:", weekday, day);
+                    return null;
+                }
+            } else {
+                console.error("Formato de fecha no válido:", dateString);
+                return null;
+            }
+        } catch (err) {
+            console.error("Error al procesar la fecha:", err);
             return null;
         }
     };
@@ -73,20 +70,15 @@ export default function Notas() {
         fetchData();
     }, []);
 
-        useEffect(() => {
-            if (journals && journals.length > 0) {
-                console.log("Journals completos:", JSON.stringify(journals, null, 2));
-        
+    useEffect(() => {
+        if (journals && journals.length > 0) {
+            try {
                 const sortedNotas = journals.flatMap(journal => {
-                    console.log("Journal:", journal);
-        
                     return journal.months.flatMap(month => {
-                        console.log("Month:", month);
                         const monthName = month.month;
-        
+
                         return month.journals.map(nota => {
-                            console.log("Nota:", nota);
-        
+                            const originalDate = nota.date;
                             const fechaConvertida = parseDate(nota.date, monthName, "2024");
         
                             return {
@@ -94,40 +86,41 @@ export default function Notas() {
                                 journal_id: journal.id,
                                 month: monthName,
                                 date: fechaConvertida,
+                                originalDate: originalDate,
                             };
                         });
                     });
                 }).sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-                // Agrupar las notas por mes
+            
                 const groupedNotas = sortedNotas.reduce((acc, nota) => {
                     const dateString = nota.date;
-                    console.log("Fecha recibida en agrupamiento:", dateString);
-
                     if (!dateString) {
                         console.error("Fecha inválida:", dateString);
                         return acc;
                     }
-        
+                    
                     const monthNumber = dateString.split('-')[1];
                     const monthNameInSpanish = Object.keys(month_number).find(key => month_number[key] === monthNumber);
-
+            
                     if (!acc[monthNameInSpanish]) {
                         acc[monthNameInSpanish] = [];
                     }
                     acc[monthNameInSpanish].push(nota);
                     return acc;
                 }, {});
-        
+            
                 setNotasPorMes(groupedNotas);
+            } catch (err) {
+                console.error("Error al procesar los journals:", err);
             }
-        }, [journals]);
+        }
+    }, [journals]);
 
     // Función para renderizar cada nota
     const renderItem = ({ item }) => (
         <View style={styles.nota}>
             <Text style={styles.textoNota}>{item.description}</Text>
-            <Text style={styles.fechaNota}>{item.date}</Text>
+            <Text style={styles.fechaNota}>{item.originalDate}</Text>
         </View>
     );
     
