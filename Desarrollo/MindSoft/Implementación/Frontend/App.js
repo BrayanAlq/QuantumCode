@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import CustomDrawerContent from "./src/components/barraMenu";
-
+import { DrawerProvider, useDrawerContext } from "./src/services/drawerContext";
 
 import PantallaBienvenida from "./src/screens/bienvenida";
 import login from "./src/screens/login";
@@ -23,6 +23,8 @@ import Recomendaciones from "./src/screens/recomendaciones";
 
 
   function MyStack() {
+    const { setSwipeEnabled } = useDrawerContext();
+
     return (
       <Stack.Navigator initialRouteName="login">
         <Stack.Screen
@@ -34,18 +36,30 @@ import Recomendaciones from "./src/screens/recomendaciones";
             headerTitleAlign: "center",
             headerStyle: { backgroundColor: "#0B72D2" },
           }}
+          listeners={{
+            focus: () => setSwipeEnabled(false), 
+            blur: () => setSwipeEnabled(true), 
+          }}
         />
 
         <Stack.Screen
           name="Confirmacion"
           component={Confirmacion}
           options={{ headerShown: false }}
+          listeners={{
+            focus: () => setSwipeEnabled(false),
+            blur: () => setSwipeEnabled(true),
+          }}
         />
 
         <Stack.Screen
           name="Welcome"
           component={PantallaBienvenida}
           options={{ headerShown: false }}
+          listeners={{
+            focus: () => setSwipeEnabled(false),
+            blur: () => setSwipeEnabled(true),
+          }}
         />
 
         <Stack.Screen
@@ -104,14 +118,22 @@ import Recomendaciones from "./src/screens/recomendaciones";
   }
 
   export default function App() {
+    const screensWithoutDrawer = ['login', 'Confirmacion', 'Welcome'];
 
     return (
+      <DrawerProvider>
       <NavigationContainer>
-        <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} /> } screenOptions={{
-          drawerStyle: {
-            width: 310, 
-          },
-        }} >
+        <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props}  /> } 
+        screenOptions={({ route }) => {
+          const { isSwipeEnabled } = useDrawerContext();
+          return {
+            drawerStyle: {
+              width: 310,
+              backgroundColor: "transparent",
+            },
+            swipeEnabled: isSwipeEnabled, 
+          };
+        }}>
           <Drawer.Screen name="Home" component={MyStack} options={{ headerShown: false }} />
           <Drawer.Screen name="Perfil" component={Perfil} options={{ headerShown: false }}/>
           <Drawer.Screen name="DiarioNotas" component={Notas} options={{ headerShown: false }}/>
@@ -121,8 +143,8 @@ import Recomendaciones from "./src/screens/recomendaciones";
           <Drawer.Screen name="NuevoObjetivo" component={NuevoObjetivo} options={{ headerShown: false }} />
           <Drawer.Screen name="ModificarObjetivo" component={ModificarObjetivo} options={{ headerShown: false }} />
           <Drawer.Screen name="AgregarNotas" component={AgregarNotas} options={{ headerShown: false }} />
-          
         </Drawer.Navigator>
       </NavigationContainer>
+      </DrawerProvider>
     );
   }
