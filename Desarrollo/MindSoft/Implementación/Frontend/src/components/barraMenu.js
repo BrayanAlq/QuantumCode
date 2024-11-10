@@ -34,12 +34,12 @@ export default function CustomDrawerContent(props) {
         <Image source={require('../../assets/recomendaciones.png')} style={styles.iconos} resizeMode="contain" />
         <Text style={styles.drawerLabel}>Recomendaciones</Text>
       </TouchableOpacity>
-      
-      <TouchableOpacity style={styles.drawerItem} onPress={handleLogout} key="salir">
-        <Image source={require('../../assets/salir.png')} style={styles.iconos} resizeMode="contain" />
-        <Text style={styles.drawerLabel}>Salir</Text>
-      </TouchableOpacity>
-      
+      <View style={styles.logoutContainer}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} key="salir">
+          <Image source={require('../../assets/salir.png')} style={styles.iconos} resizeMode="contain" />
+          <Text style={styles.drawerLabel}>Salir</Text>
+        </TouchableOpacity>
+      </View>
     </DrawerContentScrollView>
   );
 }
@@ -49,6 +49,10 @@ const styles = StyleSheet.create({
     drawerContainer: {
         backgroundColor: '#0B72D2', 
         paddingTop: 15, 
+        borderTopRightRadius:35,
+        borderBottomRightRadius:35,
+        overflow: 'hidden',
+        flexGrow: 1,
 },
   drawerItem: {
     flexDirection: 'row',
@@ -68,5 +72,18 @@ const styles = StyleSheet.create({
     height: 20,
     marginLeft: 0,
   },
+  logoutContainer: {
+    borderLeftWidth: 10,
+    paddingVertical: 0,
+    marginTop: 400, 
+  },
 
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingLeft: 15,
+    paddingRight: 5,
+    backgroundColor: '#5A9BD8', 
+  },
 });
