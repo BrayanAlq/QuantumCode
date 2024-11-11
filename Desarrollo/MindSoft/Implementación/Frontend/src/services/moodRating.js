@@ -1,13 +1,14 @@
-import { API_URL } from '@env';
+import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
+import { getLocalDay } from "../utils/getLocalDay";
 
 export const createMoodRating = async (moodRating, token) => {
   try {
     const response = await fetch(`${API_URL}/mood-rating`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         date: moodRating.date,
@@ -27,23 +28,24 @@ export const createMoodRating = async (moodRating, token) => {
 };
 
 export const getMoodRating = async () => {
-  const token = await SecureStore.getItemAsync('authToken')
-  console.log("tokenGET", token)
+  fecha = getLocalDay();
+  const token = await SecureStore.getItemAsync("authToken");
+  console.log("tokenGET", token);
   const response = await fetch(`${API_URL}/stats-moods`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      date: new Date().toISOString().split('T')[0]
-    })
+      date: fecha,
+    }),
   });
 
-  console.log("responseGET", response)
+  console.log("responseGET", response);
   if (!response.ok) {
-    throw new Error('Error fetching mood rating');
+    throw new Error("Error fetching mood rating");
   }
 
   return await response.json();
-}
+};
