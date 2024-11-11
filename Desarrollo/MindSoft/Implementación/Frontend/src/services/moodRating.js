@@ -28,7 +28,7 @@ export const createMoodRating = async (moodRating, token) => {
 };
 
 export const getMoodRating = async () => {
-  fecha = getLocalDay();
+  const fecha = getLocalDay();
   const token = await SecureStore.getItemAsync("authToken");
   console.log("tokenGET", token);
   const response = await fetch(`${API_URL}/stats-moods`, {
