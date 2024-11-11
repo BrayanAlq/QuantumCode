@@ -32,14 +32,21 @@ export default function Estadisticas() {
         { emoji: '😊' },
     ];
 
-    // Vamos a simular los datos de calificaciones diarias (en formato que mencionaste):
-    const dailyRatingsData = [
-        { daily_rating_id: 1, rating: 1, date: '2024-10-16', user_id: 1 },
-        { daily_rating_id: 2, rating: 3, date: '2024-11-07', user_id: 1 },
-        { daily_rating_id: 3, rating: 3, date: '2024-11-08', user_id: 1 },
-        { daily_rating_id: 4, rating: 3, date: '2024-11-09', user_id: 1 },
-    ];
-
+    const spanish_months = {
+        "January": "Enero",
+        "February": "Febrero",
+        "March": "Marzo",
+        "April": "Abril",
+        "May": "Mayo",
+        "June": "Junio",
+        "July": "Julio",
+        "August": "Agosto",
+        "September": "Septiembre",
+        "October": "Octubre",
+        "November": "Noviembre",
+        "December": "Diciembre"
+      };
+    
     useEffect(() => {
         const obtenerCalificacionesDiarias = async () => {
             try {
@@ -94,45 +101,31 @@ export default function Estadisticas() {
             console.log('Datos vacíos o inválidos:', data);
             return {};  // Retorna un objeto vacío si no hay datos
         }
-    
-        // Ordena las fechas para que se muestren correctamente
-        const sortedData = data.sort((a, b) => new Date(a.date) - new Date(b.date));
-    
-        // Limita a los últimos 7 días
-        const limitedData = sortedData.slice(-7);
-    
-        // Inicializa un objeto para almacenar las calificaciones por fecha
-        const aggregatedData = {};
-    
-        limitedData.forEach(item => {
-            const { date, rating } = item;
-            if (!aggregatedData[date]) {
-                aggregatedData[date] = [];
-            }
-            aggregatedData[date].push(rating); // Agrega la calificación al array de esa fecha
-        });
-    
-        // Crea el objeto para el gráfico
+
+        // Traducir los meses al español
+        const translateMonthToSpanish = (monthInEnglish) => {
+            return spanish_months[monthInEnglish] || monthInEnglish;
+        };
+
         const chartData = {
-            labels: Object.keys(aggregatedData),
+            labels: data.map(item => {
+                const [monthInEnglish, year] = item.month_year.split('-');  // Desestructura el mes y año
+                const monthInSpanish = translateMonthToSpanish(monthInEnglish);  // Traduce el mes
+                return `${monthInSpanish}-${year}`;  // Devuelve el formato Mes-Año
+            }),  // Mes-Año traducido
             datasets: [
                 {
-                    data: Object.keys(aggregatedData).map((date) => {
-                        const ratings = aggregatedData[date];  // Obtener todas las calificaciones de una fecha
-                        const average = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
-                        return average;
-                    }),
-                    color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,  // Definir color como función
+                    data: data.map(item => item.average_rating),  // Promedio de calificación
+                    color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,  // Color de la línea
                     strokeWidth: 2, 
                 },
             ],
         };
-    
         return chartData;
     };
 
     // Solo procesamos los datos si ya tenemos algo en dailyRatings
-    const chartData = dailyRatings.length > 0 ? processDataForChart(dailyRatings) : null;
+    const chartData = rating_all.length > 0 ? processDataForChart(rating_all) : null;
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
