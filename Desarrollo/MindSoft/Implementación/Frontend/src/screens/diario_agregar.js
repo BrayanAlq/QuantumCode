@@ -11,12 +11,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { EnviarNota } from "../icons/EnviarNota";
 import { getLocalDay } from "../utils/getLocalDay";
 import { useJournal } from "../hooks/useJournal";
+import { createJournal } from "../services/journal";
 
 export default function AgregarNotas({ navigation }) {
   const [currentMonth, setCurrentMonth] = useState("");
   const [inputHeight, setInputHeight] = useState(40); // Altura inicial del TextInput
   const [text, setText] = useState(""); // Estado para almacenar el texto del TextInput
-    const { createNewJournal, loading, error, token } = useJournal();
+  const { fetchJournals, loading, error } = useJournal();
 
   useEffect(() => {
     const dateString = getLocalDay();
@@ -40,50 +41,43 @@ export default function AgregarNotas({ navigation }) {
 
   const handleSend = async () => {
     if (!text.trim()) {
-        Alert.alert('Error', 'Por favor, escribe algo en tu diario antes de enviarlo.');
-        return;
+      Alert.alert('Error', 'Por favor, escribe algo en tu diario antes de enviarlo.');
+      return;
     }
 
     try {
-        const date = new Date();
-        console.log("Fecha original:", date);
+      const date = new Date();
 
-        // Usamos Intl.DateTimeFormat para convertir a la zona horaria de Lima
-        const options = { 
-            timeZone: "America/Lima", 
-            year: 'numeric', 
-            month: '2-digit', 
-            day: '2-digit'
-        };
+      // Usamos Intl.DateTimeFormat para convertir a la zona horaria de Lima
+      const options = {
+        timeZone: "America/Lima",
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      };
 
-        // Formateamos solo la parte de la fecha
-        const limaDate = new Intl.DateTimeFormat('en-US', options).format(date);
-        
-        console.log("Fecha en Lima (solo fecha):", limaDate);
+      // Formateamos solo la parte de la fecha
+      const limaDate = new Intl.DateTimeFormat('en-US', options).format(date);
 
-        // Formato esperado para la fecha: YYYY-MM-DD
-        const [month, day, year] = limaDate.split('/'); // Separamos la fecha
-        const formattedDate = `${year}-${month}-${day}`; // Reordenamos en el formato YYYY-MM-DD
+      // Formato esperado para la fecha: YYYY-MM-DD
+      const [month, day, year] = limaDate.split('/'); // Separamos la fecha
+      const formattedDate = `${year}-${month}-${day}`; // Reordenamos en el formato YYYY-MM-DD
 
-        console.log("Fecha final en formato YYYY-MM-DD:", formattedDate);
 
-        if (!token) {
-            throw new Error('No se ha encontrado el token de autenticación');
-        }
-
-        const result = await createNewJournal(text, formattedDate);
-
-        if (result) {
-            Alert.alert('Éxito', 'Tu diario ha sido guardado exitosamente.');
-            setText('');
-        } else {
-            throw new Error('Hubo un error al guardar el diario');
-        }
+      const result = await createJournal(text, formattedDate);
+      if (result) {
+        Alert.alert('Éxito', 'Tu diario ha sido guardado exitosamente.');
+        setText('');
+        await fetchJournals();
+        navigation.navigate('DiarioNotas');
+      } else {
+        throw new Error('Hubo un error al guardar el diario');
+      }
     } catch (error) {
-        console.error('Error al crear diario:', error);
-        Alert.alert('Error', error.message || 'Hubo un problema al crear tu diario');
+      console.error('Error al crear diario:', error);
+      Alert.alert('Error', error.message || 'Hubo un problema al crear tu diario');
     }
-};
+  };
 
   const abrirMenu = () => {
     navigation.openDrawer();
