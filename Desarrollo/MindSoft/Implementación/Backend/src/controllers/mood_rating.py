@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
 
 from ..models import MoodRating, MoodRatingDetail, Mood
-from ..schemas.mood_rating import MoodRatingCreate
+from ..schemas.mood_rating import MoodRatingCreate, CheckMoodRating
 from ..schemas.user import UserToJwt
 
 from datetime import datetime
@@ -19,9 +19,8 @@ async def create_mood_rating(mood_rating: MoodRatingCreate, db: Session, user: U
     db.refresh(new_mood_rating_detail)
   return { "message": "Estados de ánimo guardados correctamente" }
 
-async def check_mood_rating(db: Session, user: UserToJwt):
-  actual_date = datetime.now().strftime("%Y-%m-%d")
-  count_ratings_today = db.query(MoodRating).filter(MoodRating.date == actual_date, MoodRating.user_id == user.user_id).count()
+async def check_mood_rating(check_mood_rating: CheckMoodRating,db: Session, user: UserToJwt):
+  count_ratings_today = db.query(MoodRating).filter(MoodRating.date == check_mood_rating.date, MoodRating.user_id == user.user_id).count()
   if count_ratings_today > 0:
     raise HTTPException(status_code=403, detail={
       "status": "forbidden",

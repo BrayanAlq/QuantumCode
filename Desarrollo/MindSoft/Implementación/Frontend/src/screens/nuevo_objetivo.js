@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useGoals } from "../hooks/useGoal";
+import { getLocalDay } from "../utils/getLocalDay";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 export default function NuevoObjetivo({ navigation }) {
   const [objetivo, setObjetivo] = useState("");
@@ -38,7 +40,7 @@ export default function NuevoObjetivo({ navigation }) {
       const goalData = {
         goal_name: objetivo,
         duration_days: parseInt(tiempo, 10),
-        start_date: new Date().toISOString().split("T")[0],
+        start_date: getLocalDay(),
       };
 
       await createGoal(goalData); // Llamando a createGoal
@@ -64,7 +66,7 @@ export default function NuevoObjetivo({ navigation }) {
       {/* Barra de navegación superior */}
       <View style={styles.header}>
         <TouchableOpacity onPress={abrirMenu}>
-          <Ionicons name="menu" size={40} color="black" paddingTop={5}/>
+          <Ionicons name="menu" size={40} color="black" paddingTop={5} />
         </TouchableOpacity>
         <View style={styles.separator} />
       </View>
