@@ -10,7 +10,7 @@ export function ContainerMoodRating({ title, data }) {
   }))
 
   return (
-    <View className="bg-white px-4 mt-10 py-4 rounded-2xl flex-nowrap">
+    <View className="bg-white px-4 mt-8 py-4 rounded-2xl flex-nowrap">
       <Text className="text-base font-bold">Estadísticas de Estados de ánimo {title}</Text>
       <FlatList
         data={dataPlusProgress}

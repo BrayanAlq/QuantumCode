@@ -64,6 +64,10 @@ export default function Estadisticas() {
             </View>
 
             <Text style={styles.titulo}>Mis estadísticas</Text>
+            
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Estadisticas2")}>
+                <Text style={styles.buttonText}>Ver Estadísticas de Emociones</Text>
+            </TouchableOpacity>
 
             <View style={styles.boxContainer}>
                 <Text style={styles.boxText}>Estadística de calificación del día</Text>
@@ -189,5 +193,17 @@ const styles = StyleSheet.create({
         marginBottom: 0,
         marginLeft: 5,
         marginTop: 15,
+    },
+    button: {
+        backgroundColor: '#0B72D0',
+        padding: 10,
+        borderRadius: 5,
+        alignSelf: 'center',
+        marginVertical: 10,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });

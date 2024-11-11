@@ -16,7 +16,7 @@ import Notas from "./src/screens/diario_notas";
 import AgregarNotas from "./src/screens/diario_agregar";
 import Estadisticas from "./src/screens/estadisticas";
 import Recomendaciones from "./src/screens/recomendaciones";
-
+import Estadisticas2 from "./src/screens/MoodRatingScreen";
 
   const Stack = createStackNavigator();
   const Drawer = createDrawerNavigator();
@@ -83,6 +83,8 @@ import Recomendaciones from "./src/screens/recomendaciones";
           component={Estadisticas}
           options={{ headerShown: false }}
         />
+        
+
         <Stack.Screen
           name="Recomendaciones"
           component={Recomendaciones}
@@ -108,7 +110,11 @@ import Recomendaciones from "./src/screens/recomendaciones";
           options={{ headerShown: false }}
         />
 
-        
+        <Stack.Screen
+          name="Estadisticas2"
+          component={Estadisticas2}
+          options={{ headerShown: false }}
+        />
 
         
 
@@ -118,7 +124,7 @@ import Recomendaciones from "./src/screens/recomendaciones";
   }
 
   export default function App() {
-    const screensWithoutDrawer = ['login', 'Confirmacion', 'Welcome'];
+    
 
     return (
       <DrawerProvider>
@@ -143,6 +149,7 @@ import Recomendaciones from "./src/screens/recomendaciones";
           <Drawer.Screen name="NuevoObjetivo" component={NuevoObjetivo} options={{ headerShown: false }} />
           <Drawer.Screen name="ModificarObjetivo" component={ModificarObjetivo} options={{ headerShown: false }} />
           <Drawer.Screen name="AgregarNotas" component={AgregarNotas} options={{ headerShown: false }} />
+          <Drawer.Screen name="Estadisticas2" component={Estadisticas2} options={{ headerShown: false }} />
         </Drawer.Navigator>
       </NavigationContainer>
       </DrawerProvider>
