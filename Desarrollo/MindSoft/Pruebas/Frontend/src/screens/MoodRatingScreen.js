@@ -41,7 +41,7 @@ export default function MoodRatingScreen() {
   return (
     <View style={styles.containerMain}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={abrirMenu}>
+        <TouchableOpacity onPress={abrirMenu} testID="menu-button">
           <Ionicons name="menu" size={40} color="black" paddingTop={5} />
         </TouchableOpacity>
         <View style={styles.separator} />
@@ -54,7 +54,7 @@ export default function MoodRatingScreen() {
           <TouchableOpacity onPress={navigateToEstadisticas} style={styles.button}>
             <Text style={styles.buttonText}>Ver Estadísticas de calificación diaria</Text>
           </TouchableOpacity>
-          {loading && <ActivityIndicator size="large" color="#0000ff" />}
+          {loading && <ActivityIndicator testID="loading-indicator" size="large" color="#0000ff" />}
           {error && <Text className="text-red-500 text-center">{error}</Text>}
           {!loading && !error && (
             <>
