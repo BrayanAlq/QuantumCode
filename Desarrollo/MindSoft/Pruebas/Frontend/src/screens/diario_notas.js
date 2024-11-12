@@ -143,7 +143,7 @@ export default function Notas() {
           <View key={item}>
             <Text style={styles.mesTitulo}>{item}</Text>
             {notasPorMes[item].map((nota) => (
-              <View key={nota.journal_id}>
+              <View key={`${nota.journal_id}-${nota.id}`}>
                 <View style={styles.nota}>
                   <Text style={styles.textoNota}>{nota.description}</Text>
                   <Text style={styles.fechaNota}>{nota.originalDate}</Text>
@@ -152,6 +152,7 @@ export default function Notas() {
             ))}
           </View>
         )}
+         testID="flatlist"
       />
 
       <TouchableOpacity
