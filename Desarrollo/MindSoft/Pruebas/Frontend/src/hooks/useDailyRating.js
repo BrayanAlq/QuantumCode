@@ -34,14 +34,14 @@ export const useDailyRating = () => {
       const response = await getDailyRatings(token);  // Llamada al servicio
 
       if (response.error) {
-          throw new Error(response.error);
+        throw new Error(response.error);
       }
 
       setDailyRatings(response);  // Actualiza el estado con los datos
       return response;  // Asegúrate de retornar la respuesta aquí
     } catch (error) {
       setError(error.message);
-      console.log('Error:', error);
+      console.error('Error:', error);
     } finally {
       setLoading(false);
     }
