@@ -1,4 +1,6 @@
-import { API_URL } from './constants'
+import { API_URL } from '@env'
+import * as SecureStore from 'expo-secure-store';
+import { CommonActions } from '@react-navigation/native';
 
 export const login = async (email, password) => {
   try {
@@ -54,3 +56,13 @@ export const verifyTokenOnServer = async (token) => {
     return { error: error.message }
   }
 }
+
+export const logout = async (navigation) => {
+  await SecureStore.deleteItemAsync('authToken');
+  navigation.dispatch(
+    CommonActions.reset({
+      index: 0,
+      routes: [{ name: 'Home' }],
+    })
+  );
+};
