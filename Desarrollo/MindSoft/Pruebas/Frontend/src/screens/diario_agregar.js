@@ -40,6 +40,7 @@ export default function AgregarNotas({ navigation }) {
   }, []);
 
   const handleSend = async () => {
+    console.log("Botón Enviar Nota presionado");
     if (!text.trim()) {
       Alert.alert('Error', 'Por favor, escribe algo en tu diario antes de enviarlo.');
       return;
@@ -63,12 +64,13 @@ export default function AgregarNotas({ navigation }) {
       const [month, day, year] = limaDate.split('/'); // Separamos la fecha
       const formattedDate = `${year}-${month}-${day}`; // Reordenamos en el formato YYYY-MM-DD
 
-
+      console.log("Llamando a createJournal...");
       const result = await createJournal(text, formattedDate);
       if (result) {
         Alert.alert('Éxito', 'Tu diario ha sido guardado exitosamente.');
         setText('');
         await fetchJournals();
+        console.log("Llamando a navigation.navigate('DiarioNotas')")
         navigation.navigate('DiarioNotas');
       } else {
         throw new Error('Hubo un error al guardar el diario');
@@ -106,7 +108,7 @@ export default function AgregarNotas({ navigation }) {
           }
         />
       </View>
-      <TouchableOpacity onPress={handleSend} style={styles.EnviarNota}>
+      <TouchableOpacity testID="sendButton" onPress={handleSend} style={styles.EnviarNota}>
         <EnviarNota height="80" />
       </TouchableOpacity>
     </View>
