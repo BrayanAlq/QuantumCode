@@ -241,8 +241,9 @@ const styles = StyleSheet.create({
 
   rotatingIcon: {
     position: "absolute",
-    top: 210,
-    left: 150,
+    top: "57%",
+    left: "45.5%",
+    transform: [{ translateX: -30 }, { translateY: -30 }],
   },
   boxContainer: {
     backgroundColor: "white",
