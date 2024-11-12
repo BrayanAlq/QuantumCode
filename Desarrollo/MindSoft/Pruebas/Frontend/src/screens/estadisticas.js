@@ -18,7 +18,6 @@ import {
 } from "@react-navigation/native";
 import { getLocalDay } from "../utils/getLocalDay";
 import { LineChart } from "react-native-chart-kit"; // Importa LineChart
-import { Dimensions } from "react-native"; // Para el tamaño del gráfico
 import * as SecureStore from "expo-secure-store";
 import { useDailyRating } from "../hooks/useDailyRating";
 
@@ -35,7 +34,7 @@ export default function Estadisticas() {
   const route = useRoute();
 
   const fecha = getLocalDay();
-    
+
   const promedioSemana = rating_week?.average_rating || 0;
 
   const emojisCalif = [{ emoji: "😖" }, { emoji: "😊" }];
@@ -57,23 +56,23 @@ export default function Estadisticas() {
 
   useEffect(() => {
     const obtenerCalificacionesDiarias = async () => {
-        try {
-            const token = await SecureStore.getItemAsync('authToken');
-            if (!token) {
-                console.log('No se pudo obtener el token de autenticación');
-                return;
-            }
-
-            const data = await fetchDailyRatings(token);
-
-            if (data && Array.isArray(data)) {
-                setDailyRatings(data);  // Asegúrate de actualizar el estado
-                setLoadingData(false);   // Datos obtenidos, se puede ocultar el indicador de carga
-            }
-        } catch (error) {
-            console.log('Error al obtener las calificaciones diarias:', error);
-            setLoadingData(false);   // En caso de error, también se oculta el indicador de carga
+      try {
+        const token = await SecureStore.getItemAsync('authToken');
+        if (!token) {
+          console.log('No se pudo obtener el token de autenticación');
+          return;
         }
+
+        const data = await fetchDailyRatings(token);
+
+        if (data && Array.isArray(data)) {
+          setDailyRatings(data);  // Asegúrate de actualizar el estado
+          setLoadingData(false);   // Datos obtenidos, se puede ocultar el indicador de carga
+        }
+      } catch (error) {
+        console.log('Error al obtener las calificaciones diarias:', error);
+        setLoadingData(false);   // En caso de error, también se oculta el indicador de carga
+      }
     };
 
     obtenerCalificacionesDiarias();
@@ -110,22 +109,22 @@ export default function Estadisticas() {
       return {};  // Retorna un objeto vacío si no hay datos
     }
 
-  // Traducir los meses al español
-  const translateMonthToSpanish = (monthInEnglish) => {
+    // Traducir los meses al español
+    const translateMonthToSpanish = (monthInEnglish) => {
       return spanish_months[monthInEnglish] || monthInEnglish;
-  };
+    };
 
-  const chartData = {
+    const chartData = {
       labels: data.map(item => {
-          const [monthInEnglish, year] = item.month_year.split('-');  // Desestructura el mes y año
-          const monthInSpanish = translateMonthToSpanish(monthInEnglish);  // Traduce el mes
-          return `${monthInSpanish}-${year}`;  // Devuelve el formato Mes-Año
+        const [monthInEnglish, year] = item.month_year.split('-');  // Desestructura el mes y año
+        const monthInSpanish = translateMonthToSpanish(monthInEnglish);  // Traduce el mes
+        return `${monthInSpanish}-${year}`;  // Devuelve el formato Mes-Año
       }),  // Mes-Año traducido
       datasets: [
         {
           data: data.map(item => item.average_rating),  // Promedio de calificación
           color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,  // Color de la línea
-          strokeWidth: 2, 
+          strokeWidth: 2,
         },
       ],
     };
@@ -138,7 +137,7 @@ export default function Estadisticas() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={abrirMenu}>
+        <TouchableOpacity onPress={abrirMenu} testID="menu-button">
           <Ionicons name="menu" size={40} color="black" paddingTop={5} />
         </TouchableOpacity>
 
@@ -184,9 +183,9 @@ export default function Estadisticas() {
       </View>
       {/* Indicador de carga si los datos aún no se han cargado */}
       {loadingData ? (
-          <ActivityIndicator size="large" color="#0B72D0" />
-        ) : (
-          <View style={styles.boxContainer}>
+        <ActivityIndicator testID="loading-indicator" size="large" color="#0B72D0" />
+      ) : (
+        <View style={styles.boxContainer}>
           <Text style={styles.boxText}>Estadísticas de calificaciones diarias totales</Text>
           {/* Contenedor con desplazamiento horizontal */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollContainer}>
