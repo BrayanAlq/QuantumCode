@@ -28,4 +28,28 @@ def create_tables():
 def get_db():
   with SessionLocal() as session:
     yield session
+
+def initalize_db_moods():
+  with SessionLocal() as session:
+    from ..models import Mood
+    count = session.query(Mood).count()
+
+    if count == 0:
+
+      moods = [
+        Mood(mood="Deprimido"),
+        Mood(mood="Inseguro"),
+        Mood(mood="Ansioso"),
+        Mood(mood="Enojado"),
+        Mood(mood="Exhausto"),
+        Mood(mood="Eufórico"),
+        Mood(mood="Aliviado"),
+        Mood(mood="Sorprendido"),
+        Mood(mood="Feliz")
+      ]
+
+      for mood in moods:
+        session.add(mood)
+      session.commit()
+
     
