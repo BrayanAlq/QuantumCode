@@ -1,34 +1,64 @@
+import React, { useState,useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert,ActivityIndicator } from 'react-native';
+import CalificacionDiaria from '../components/CalificacionDiaria';
+import useMoodRating from '../hooks/useCheckDailyRating';
 
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import CalificacionDiaria from '../components/CalificacionDiaria'; // Importamos el componente
 
-
-export default function PantallaBienvenida() {
+export default function PantallaBienvenida({ navigation }) {
   const [emojiPopupVisible, setEmojiPopupVisible] = useState(false);
+  const { status, loading, error } = useMoodRating();
+  const [isLoading, setIsLoading] = useState(true);
+  
+
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      if (!loading && status !== null) {
+        if (!status) {
+          navigation.replace('Recomendaciones');
+        } else {
+          setEmojiPopupVisible(true);
+        }
+      }
+    }, 6000); 
+
+    return () => clearTimeout(timer);
+  }, [loading, status, navigation]);
+
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Ocurrió un error: {error}</Text>
+      </View>
+    );
+  }
+
+
 
   return (
     <View style={styles.container}>
-
       <Image source={require('./../../assets/logo.png')} style={styles.icon1} resizeMode="contain" />
-
 
       <Text style={styles.welcomeText}>Bienvenido a Mindsoft</Text>
       <Text style={styles.subText}>Déjanos saber cómo te encuentras el día de hoy!!</Text>
 
+      {isLoading ? (
+        <>
+          
+          <ActivityIndicator size="large" color="#0B72D2" />
+          <Text style={styles.loadingText}>Cargando...</Text> 
+        </>
+      ) :(
 
-      <TouchableOpacity
-        style={styles.openButton}
-        onPress={() => setEmojiPopupVisible(true)}
-      >
-        <Text style={styles.buttonText}>Seleccionar emociones</Text>
-      </TouchableOpacity>
-
-
-      <CalificacionDiaria
-        visible={emojiPopupVisible}
-        onClose={() => setEmojiPopupVisible(false)}
-      />
+      emojiPopupVisible && (
+        <CalificacionDiaria
+          visible={emojiPopupVisible}
+          onClose={() => setEmojiPopupVisible(false)}
+        />
+      )
+      )}
     </View>
   );
 }
@@ -55,20 +85,20 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  openButton: {
-    backgroundColor: '#0B72D2',
-    marginTop: 50,
-    padding: 10,
-    borderRadius: 10,
-  },
   buttonText: {
     color: 'white',
     fontSize: 18,
+  },
+  loadingText: {
+    fontSize: 15,
+    color: '#black',
+    fontWeight: 'semibold',
+    marginTop: 20, 
+    textAlign: 'center',
   },
   icon1: {
     width: 150,
     height: 150,
     marginLeft: 45,
   },
-
 });
